@@ -1,0 +1,20 @@
+[
+  {
+    //"Id": 1,
+    "UserType":  "Admin",
+    "AccountType": "Admin Account",
+    "Platform":  "App + Web"
+  },
+  {
+    //"Id": 2,
+    "UserType": "User",
+    "AccountType": "Corporate Account",
+    "Platform": "App + Web"
+  },
+  //{
+  //  //"Id": 3,
+  //  "UserType": "General Public",
+  //  "AccountType": "User Account",
+  //  "Platform": "App"
+  //}
+]

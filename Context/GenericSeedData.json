@@ -1,0 +1,167 @@
+{
+  "Departments": [
+    {
+      "Id": 1,
+      "Name": "Yarn Export",
+      "Code": "Yarn Export"
+    },
+    {
+      "Id": 2,
+      "Name": "Fabric Export",
+      "Code": "Fabric Export"
+    },
+    {
+      "Id": 3,
+      "Name": "Yarn Local",
+      "Code": "Yarn Local"
+    },
+    {
+      "Id": 4,
+      "Name": "Yarn Local Karachi",
+      "Code": "Yarn Local Karachi"
+    },
+    {
+      "Id": 5,
+      "Name": "Fabric Local",
+      "Code": "Fabric Local"
+    },
+    {
+      "Id": 6,
+      "Name": "Home Textile & Garment",
+      "Code": "Home Textile & Garment"
+    }
+  ],
+  "UOMs": [
+    {
+      "Id": 1,
+      "Name": "Sets",
+      "Unit": "Sets",
+      "DepartmentId": 6
+    },
+    {
+      "Id": 2,
+      "Name": "Yards",
+      "Unit": "Yards",
+      "DepartmentId": 6
+    },
+    {
+      "Id": 3,
+      "Name": "Meters",
+      "Unit": "Meters",
+      "DepartmentId": 6
+    },
+    {
+      "Id": 4,
+      "Name": "Pieces",
+      "Unit": "Pieces",
+      "DepartmentId": 6
+    },
+    {
+      "Id": 5,
+      "Name": "Unit",
+      "Unit": "Unit",
+      "DepartmentId": 6
+    },
+    {
+      "Id": 6,
+      "Name": "Kilograms",
+      "Unit": "Kg",
+      "DepartmentId": 6
+    }
+  ],
+  "CurrencyTypes": [
+    {
+      "Name": "Pak Rupees",
+      "Code": "PKR"
+    },
+    {
+      "Name": "US Dollars",
+      "Code": "USD"
+    },
+    {
+      "Name": "Euro",
+      "Code": "EUR"
+    },
+    {
+      "Name": "Pound",
+      "Code": "GBP"
+    }
+  ],
+  "DocumentTypes": [
+    {
+      "Id": 1,
+      "Name": "Bill of Landing",
+      "Code": "BOL"
+    },
+    {
+      "Id": 2,
+      "Name": "Debit Credit Note",
+      "Code": "DCN"
+    },
+    {
+      "Id": 3,
+      "Name": "Free Trade Agreement (Or Certificate of Origin)",
+      "Code": "FTA_CO"
+    },
+    {
+      "Id": 4,
+      "Name": "Full Set of Document",
+      "Code": "ALL"
+    },
+    {
+      "Id": 5,
+      "Name": "Fumigation Certificate",
+      "Code": "FC"
+    },
+    {
+      "Id": 6,
+      "Name": "Import Permit",
+      "Code": "IP"
+    },
+    {
+      "Id": 7,
+      "Name": "Inspection Reports",
+      "Code": "IR"
+    },
+    {
+      "Id": 8,
+      "Name": "Invoices Sale",
+      "Code": "INV"
+    },
+    {
+      "Id": 9,
+      "Name": "Letter Of Credit",
+      "Code": "LC"
+    },
+    {
+      "Id": 10,
+      "Name": "Packing List",
+      "Code": "PL"
+    },
+    {
+      "Id": 11,
+      "Name": "Payment Deposit Slips",
+      "Code": "PDS"
+    },
+    {
+      "Id": 12,
+      "Name": "Phytosanitary Certificate",
+      "Code": "PC"
+    },
+    {
+      "Id": 13,
+      "Name": "Purchase Order",
+      "Code": "PO"
+    },
+    {
+      "Id": 14,
+      "Name": "Supplier Sale Contract<",
+      "Code": "SSC"
+    },
+    {
+      "Id": 15,
+      "Name": "Tax Challan",
+      "Code": "TC"
+    }
+  ]
+}
