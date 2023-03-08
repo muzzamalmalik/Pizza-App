@@ -11,8 +11,6 @@ namespace PizzaOrder.Models
 
         public int CretedById { get; set; }
 
-        public int CompanyId { get; set; }
-
         public DateTime DateCreated { get; set; }
 
         public int? UpdateById { get; set; }

@@ -60,5 +60,54 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
+        [HttpPost("AddNewTopping")]
+        public async Task<IActionResult> AddNewTopping(AddNewToppingDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _response = await _repo.AddNewTopping(model);
+
+            return Ok(_response);
+        }
+
+        [HttpPut("EditMewTopping/{id}")]
+        public async Task<IActionResult> EditNewTopping(int id, EditNewToppingDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _response = await _repo.EditNewTopping(id, model);
+
+            return Ok(_response);
+        }
+
+        [HttpGet("GetAllNewTopping/{ComapnyId}")]
+        public async Task<IActionResult> GetAllNewTopping(int ComapnyId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.GetAllNewTopping(ComapnyId);
+
+            return Ok(_response);
+        }
+        [HttpGet("GetAllToppingById/{Id}")]
+        public async Task<IActionResult> GetAllToppingById(int Id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.GetAllToppingById(Id);
+
+            return Ok(_response);
+        }
     }
+
 }

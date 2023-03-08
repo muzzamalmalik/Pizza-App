@@ -9,6 +9,6 @@ namespace PizzaOrder.IRepository
     {
         Task<ServiceResponse<object>> AddDealSectionDetail(AddDealSectionDetailDto dtoData);
         Task<ServiceResponse<object>> EditDealSectionDetail(int id, EditDealSectionDetailDto dtoData);
-        Task<ServiceResponse<object>> GetAllDealSectionDetail(int CompanyId);
+        //Task<ServiceResponse<object>> GetAllDealSectionDetail();
     }
 }

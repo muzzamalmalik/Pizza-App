@@ -167,16 +167,13 @@ namespace PizzaOrder.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("CellNumber")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
 
                     b.Property<string>("ContactPerson")
                         .IsRequired()
@@ -193,14 +190,10 @@ namespace PizzaOrder.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
@@ -213,25 +206,25 @@ namespace PizzaOrder.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
                     b.Property<string>("SecondaryCellNumber")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("SecondaryContactPerson")
-                        .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
                     b.Property<int?>("UpdateById")
                         .HasColumnType("int");
 
+                    b.Property<int>("UserTypeId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Company");
                 });
@@ -242,9 +235,6 @@ namespace PizzaOrder.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
@@ -281,13 +271,7 @@ namespace PizzaOrder.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("CompanyId");
-
-                    b.HasIndex("ItemId");
-
-                    b.HasIndex("ItemSizeId");
 
                     b.ToTable("Crusts");
                 });
@@ -319,7 +303,7 @@ namespace PizzaOrder.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.Property<int>("DiscountAmount")
+                    b.Property<int?>("DiscountAmount")
                         .HasColumnType("int");
 
                     b.Property<string>("FileName")
@@ -332,7 +316,7 @@ namespace PizzaOrder.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.Property<int>("Percentage")
+                    b.Property<int?>("Percentage")
                         .HasColumnType("int");
 
                     b.Property<int>("Price")
@@ -340,15 +324,16 @@ namespace PizzaOrder.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<int?>("UpdateById")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyId");
+                    b.HasIndex("CompanyId", "Title")
+                        .IsUnique();
 
                     b.ToTable("Deals");
                 });
@@ -366,9 +351,6 @@ namespace PizzaOrder.Migrations
                     b.Property<int>("ChooseQuantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CretedById")
                         .HasColumnType("int");
 
@@ -380,6 +362,15 @@ namespace PizzaOrder.Migrations
 
                     b.Property<int>("DealId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int?>("UpdateById")
                         .HasColumnType("int");
@@ -398,9 +389,6 @@ namespace PizzaOrder.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CretedById")
                         .HasColumnType("int");
 
@@ -409,9 +397,6 @@ namespace PizzaOrder.Migrations
 
                     b.Property<DateTime?>("DateModified")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("DealId")
-                        .HasColumnType("int");
 
                     b.Property<int>("DealSectionId")
                         .HasColumnType("int");
@@ -429,6 +414,50 @@ namespace PizzaOrder.Migrations
                     b.HasIndex("ItemId");
 
                     b.ToTable("DealSectionDetail");
+                });
+
+            modelBuilder.Entity("PizzaOrder.Models.FeaturedAds", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CretedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActivated")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdateById")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("FeaturedAds");
                 });
 
             modelBuilder.Entity("PizzaOrder.Models.Item", b =>
@@ -486,7 +515,8 @@ namespace PizzaOrder.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("CompanyId");
+                    b.HasIndex("CompanyId", "Name")
+                        .IsUnique();
 
                     b.ToTable("Items");
                 });
@@ -540,9 +570,6 @@ namespace PizzaOrder.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CretedById")
                         .HasColumnType("int");
 
@@ -594,14 +621,23 @@ namespace PizzaOrder.Migrations
                     b.Property<string>("DeliveryAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DeliveryCharges")
+                    b.Property<int?>("DeliveryCharges")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("EstimatedDeliveryTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Instructions")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OrderStatus")
                         .HasColumnType("int");
 
                     b.Property<string>("PaymentMethodType")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RiderId")
+                        .HasColumnType("int");
 
                     b.Property<int>("TotalAmount")
                         .HasColumnType("int");
@@ -628,10 +664,7 @@ namespace PizzaOrder.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CompanyId")
+                    b.Property<int>("BillGroup")
                         .HasColumnType("int");
 
                     b.Property<int>("CretedById")
@@ -649,11 +682,8 @@ namespace PizzaOrder.Migrations
                     b.Property<int?>("DealId")
                         .HasColumnType("int");
 
-                    b.Property<int>("DeliveryCharges")
+                    b.Property<int?>("DeliveryCharges")
                         .HasColumnType("int");
-
-                    b.Property<string>("Instructions")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ItemId")
                         .HasColumnType("int");
@@ -673,17 +703,10 @@ namespace PizzaOrder.Migrations
                     b.Property<int>("SubTotal")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ToppingId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("UpdateById")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("CompanyId");
 
                     b.HasIndex("CrustId");
 
@@ -695,9 +718,108 @@ namespace PizzaOrder.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("ToppingId");
-
                     b.ToTable("OrderDetail");
+                });
+
+            modelBuilder.Entity("PizzaOrder.Models.OrderDetailAdditionalDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("CretedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReferenceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReferenceTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UpdateById")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderDetailId");
+
+                    b.ToTable("OrderDetailAdditionalDetails");
+                });
+
+            modelBuilder.Entity("PizzaOrder.Models.OrderStatusTransaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<bool>("ActiveQueue")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("CretedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RiderId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UpdateById")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderStatusTransaction");
+                });
+
+            modelBuilder.Entity("PizzaOrder.Models.OrderTransaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("CurrentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Lat")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Long")
+                        .HasColumnType("float");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderStatusOld")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderTransaction");
                 });
 
             modelBuilder.Entity("PizzaOrder.Models.PickUp", b =>
@@ -708,9 +830,6 @@ namespace PizzaOrder.Migrations
                         .UseIdentityColumn();
 
                     b.Property<int>("BranchId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<int>("CretedById")
@@ -800,9 +919,6 @@ namespace PizzaOrder.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CretedById")
                         .HasColumnType("int");
 
@@ -838,9 +954,6 @@ namespace PizzaOrder.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
@@ -853,18 +966,15 @@ namespace PizzaOrder.Migrations
                     b.Property<DateTime?>("DateModified")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ItemId")
+                    b.Property<int>("ItemId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ItemSizeId")
+                    b.Property<int>("ItemSizeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<int?>("OrderDetailId")
-                        .HasColumnType("int");
 
                     b.Property<int>("Price")
                         .HasColumnType("int");
@@ -874,15 +984,7 @@ namespace PizzaOrder.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("CompanyId");
-
-                    b.HasIndex("ItemId");
-
-                    b.HasIndex("ItemSizeId");
-
-                    b.HasIndex("OrderDetailId");
 
                     b.ToTable("Toppings");
                 });
@@ -893,9 +995,6 @@ namespace PizzaOrder.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
 
                     b.Property<int>("CretedById")
                         .HasColumnType("int");
@@ -937,10 +1036,6 @@ namespace PizzaOrder.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("CellPhone")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
@@ -961,16 +1056,13 @@ namespace PizzaOrder.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FileName")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FullName")
                         .HasMaxLength(50)
@@ -985,12 +1077,14 @@ namespace PizzaOrder.Migrations
                     b.Property<byte[]>("PasswordSalt")
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<string>("SecoundaryContactNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("UpdateById")
                         .HasColumnType("int");
 
                     b.Property<string>("UserName")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserTypeId")
                         .HasColumnType("int");
@@ -1006,17 +1100,25 @@ namespace PizzaOrder.Migrations
                         .IsUnique()
                         .HasFilter("[ContactNumber] IS NOT NULL");
 
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasFilter("[Email] IS NOT NULL");
-
-                    b.HasIndex("UserName")
-                        .IsUnique()
-                        .HasFilter("[UserName] IS NOT NULL");
-
-                    b.HasIndex("UserTypeId");
-
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("PizzaOrder.Models.UserDeliveryAddress", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("SecoundaryAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserDeliveryAddress");
                 });
 
             modelBuilder.Entity("PizzaOrder.Models.UserLoginLog", b =>
@@ -1028,9 +1130,6 @@ namespace PizzaOrder.Migrations
 
                     b.Property<bool>("ActiveQueue")
                         .HasColumnType("bit");
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
 
                     b.Property<int>("CretedById")
                         .HasColumnType("int");
@@ -1063,9 +1162,6 @@ namespace PizzaOrder.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
 
                     b.Property<int>("CretedById")
                         .HasColumnType("int");
@@ -1132,37 +1228,13 @@ namespace PizzaOrder.Migrations
 
             modelBuilder.Entity("PizzaOrder.Models.Crust", b =>
                 {
-                    b.HasOne("PizzaOrder.Models.Category", "ObjCategory")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PizzaOrder.Models.Company", "ObjCompany")
                         .WithMany()
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PizzaOrder.Models.Item", "ObjItem")
-                        .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PizzaOrder.Models.ItemSize", "ObjItemSize")
-                        .WithMany()
-                        .HasForeignKey("ItemSizeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ObjCategory");
-
                     b.Navigation("ObjCompany");
-
-                    b.Navigation("ObjItem");
-
-                    b.Navigation("ObjItemSize");
                 });
 
             modelBuilder.Entity("PizzaOrder.Models.Deal", b =>
@@ -1204,6 +1276,17 @@ namespace PizzaOrder.Migrations
                     b.Navigation("ObjDealSection");
 
                     b.Navigation("ObjItem");
+                });
+
+            modelBuilder.Entity("PizzaOrder.Models.FeaturedAds", b =>
+                {
+                    b.HasOne("PizzaOrder.Models.Company", "ObjCompany")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ObjCompany");
                 });
 
             modelBuilder.Entity("PizzaOrder.Models.Item", b =>
@@ -1265,17 +1348,6 @@ namespace PizzaOrder.Migrations
 
             modelBuilder.Entity("PizzaOrder.Models.OrderDetail", b =>
                 {
-                    b.HasOne("PizzaOrder.Models.Category", "ObjCategory")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("PizzaOrder.Models.Company", "ObjCompany")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PizzaOrder.Models.Crust", "ObjCrust")
                         .WithMany()
                         .HasForeignKey("CrustId")
@@ -1302,15 +1374,6 @@ namespace PizzaOrder.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PizzaOrder.Models.Topping", "ObjTopping")
-                        .WithMany()
-                        .HasForeignKey("ToppingId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("ObjCategory");
-
-                    b.Navigation("ObjCompany");
-
                     b.Navigation("ObjCrust");
 
                     b.Navigation("ObjDeal");
@@ -1320,8 +1383,17 @@ namespace PizzaOrder.Migrations
                     b.Navigation("ObjItemSize");
 
                     b.Navigation("ObjOrder");
+                });
 
-                    b.Navigation("ObjTopping");
+            modelBuilder.Entity("PizzaOrder.Models.OrderDetailAdditionalDetails", b =>
+                {
+                    b.HasOne("PizzaOrder.Models.OrderDetail", "ObjOrderDetail")
+                        .WithMany()
+                        .HasForeignKey("OrderDetailId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ObjOrderDetail");
                 });
 
             modelBuilder.Entity("PizzaOrder.Models.PickUp", b =>
@@ -1359,41 +1431,13 @@ namespace PizzaOrder.Migrations
 
             modelBuilder.Entity("PizzaOrder.Models.Topping", b =>
                 {
-                    b.HasOne("PizzaOrder.Models.Category", "ObjCategory")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PizzaOrder.Models.Company", "ObjCompany")
                         .WithMany()
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PizzaOrder.Models.Item", "ObjItem")
-                        .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("PizzaOrder.Models.ItemSize", "ObjItemSize")
-                        .WithMany()
-                        .HasForeignKey("ItemSizeId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("PizzaOrder.Models.OrderDetail", "ObjOrderDetailId")
-                        .WithMany()
-                        .HasForeignKey("OrderDetailId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("ObjCategory");
-
                     b.Navigation("ObjCompany");
-
-                    b.Navigation("ObjItem");
-
-                    b.Navigation("ObjItemSize");
-
-                    b.Navigation("ObjOrderDetailId");
                 });
 
             modelBuilder.Entity("PizzaOrder.Models.User", b =>
@@ -1404,15 +1448,7 @@ namespace PizzaOrder.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PizzaOrder.Models.UserType", "ObjUserType")
-                        .WithMany()
-                        .HasForeignKey("UserTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("ObjCompany");
-
-                    b.Navigation("ObjUserType");
                 });
 
             modelBuilder.Entity("PizzaOrder.Models.UserLoginLog", b =>

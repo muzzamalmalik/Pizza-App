@@ -10,5 +10,8 @@ namespace PizzaOrder.IRepository
         Task<ServiceResponse<object>> EditCompany(int id, EditCompanyDto dtoData);
         Task<ServiceResponse<object>> GetAllCompany();
         Task<ServiceResponse<object>> GetCompanyById(int id);
+        Task<ServiceResponse<object>> GetAllCompanyByLatLong(int Range, double Lat, double Long);
+        Task<ServiceResponse<object>> SearchCompany(string SearchField);
+
     }
 }

@@ -13,6 +13,7 @@ namespace PizzaOrder.IRepository
         Task<ServiceResponse<object>> Logout();
         Task<ServiceResponse<object>> GetProfileData();
         Task<ServiceResponse<object>> GetAllUsers();
+        Task<ServiceResponse<object>> GetAdminlogoAndBrandLogoData(int CompanyId);
         Task<bool> UserExists(string userName);
 
         Task<ServiceResponse<object>> EditUser(int id, UserForEditDto model);

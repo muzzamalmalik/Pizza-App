@@ -34,37 +34,19 @@ namespace PizzaOrder.Repository
 
         public async Task<ServiceResponse<object>> AddTopping(AddToppingDto dtoData)
         {
-            var objTopping = await (from u in _context.Toppings
-                                  where u.Name == dtoData.Name.Trim()
-                                  && u.ItemId == dtoData.ItemId
-                                  && u.CompanyId == dtoData.CompanyId
 
-                                  select new
-                                  {
-                                      Name = u.Name,
-                                      CompanyId = u.CompanyId,
-                                      Price = u.Price,
-                                  }).FirstOrDefaultAsync();
-
-            if (objTopping != null)
-            {
-                if (objTopping.Name.Length > 0 && dtoData.Name.Trim() == objTopping.Name)
-                {
-                    _serviceResponse.Message = "Topping with  this Name ALready Exists";
-                }
-                _serviceResponse.Success = false;
-                _serviceResponse.Data = objTopping.Name;
-            }
-            else
+            if (dtoData != null)
             {
                 var ToppingToCreate = new Topping
                 {
                     Name = dtoData.Name,
                     Price = dtoData.Price,
-                    CategoryId = dtoData.CategoryId,
+                    //CategoryId = dtoData.CategoryId,
                     ItemId = dtoData.ItemId,
                     ItemSizeId = dtoData.ItemSizeId,
                     CompanyId = dtoData.CompanyId,
+                    CretedById = _LoggedIn_UserID,
+                    DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
                 };
 
                 await _context.Toppings.AddAsync(ToppingToCreate);
@@ -73,6 +55,9 @@ namespace PizzaOrder.Repository
                 _serviceResponse.Success = true;
                 _serviceResponse.Message = CustomMessage.Added;
             }
+        
+            
+                
 
             return _serviceResponse;
         }
@@ -84,10 +69,12 @@ namespace PizzaOrder.Repository
             {
                 objtopping.Name = dtoData.Name;
                 objtopping.Price = dtoData.Price;
-                objtopping.CategoryId = dtoData.CategoryId;
+                //objtopping.CategoryId = dtoData.CategoryId;
                 objtopping.ItemId = dtoData.ItemId;
                 objtopping.ItemSizeId = dtoData.ItemSizeId;
                 objtopping.CompanyId = dtoData.CompanyId;
+                objtopping.UpdateById = _LoggedIn_UserID;
+                objtopping.DateModified = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow));
 
                 _context.Toppings.Update(objtopping);
                 await _context.SaveChangesAsync();
@@ -112,10 +99,141 @@ namespace PizzaOrder.Repository
                                   Id = m.Id,
                                   CompanyId = m.CompanyId,
                                   Name = m.Name,
-                                  CategoryId = m.CategoryId,
+                                  //BCategoryId = m.CategoryId,
                                   Price = m.Price,
                                   ItemSizeId = m.ItemSizeId,
                                   ItemId = m.ItemId,
+                                  CreatedById = m.CretedById,
+                                  DateCreated = m.DateCreated,
+                                  UpdatedById = m.UpdateById,
+                                  DateModified = m.DateModified,
+
+                              }).ToListAsync();
+
+            if (list.Count > 0)
+            {
+                _serviceResponse.Data = list;
+                _serviceResponse.Success = true;
+                _serviceResponse.Message = "Record Found";
+            }
+            else
+            {
+                _serviceResponse.Data = null;
+                _serviceResponse.Success = false;
+                _serviceResponse.Message = CustomMessage.RecordNotFound;
+            }
+            return _serviceResponse;
+        }
+        public async Task<ServiceResponse<object>> AddNewTopping(AddNewToppingDto dtoData)
+        {
+
+            if (dtoData != null)
+            {
+                var ToppingToCreate = new Topping
+                {
+                    Name = dtoData.Name,
+                    Price = dtoData.Price,
+                    //CategoryId = dtoData.CategoryId,
+                    // ItemId = dtoData.ItemId,
+                    // ItemSizeId = dtoData.ItemSizeId,
+                    CompanyId = dtoData.CompanyId,
+                    CretedById = _LoggedIn_UserID,
+                    DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
+                };
+
+                await _context.Toppings.AddAsync(ToppingToCreate);
+                await _context.SaveChangesAsync();
+                //_serviceResponse.Data = ToppingToCreate;
+                _serviceResponse.Success = true;
+                _serviceResponse.Message = CustomMessage.Added;
+            }
+
+
+
+
+            return _serviceResponse;
+        }
+
+        public async Task<ServiceResponse<object>> EditNewTopping(int id, EditNewToppingDto dtoData)
+        {
+            var objtopping = await _context.Toppings.FirstOrDefaultAsync(s => s.Id.Equals(id));
+            if (objtopping != null)
+            {
+                objtopping.Name = dtoData.Name;
+                objtopping.Price = dtoData.Price;
+                //objtopping.CategoryId = dtoData.CategoryId;
+                //objtopping.ItemId = dtoData.ItemId;
+                //objtopping.ItemSizeId = dtoData.ItemSizeId;
+                objtopping.CompanyId = dtoData.CompanyId;
+                objtopping.UpdateById = _LoggedIn_UserID;
+                objtopping.DateModified = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow));
+
+                _context.Toppings.Update(objtopping);
+                await _context.SaveChangesAsync();
+                _serviceResponse.Success = true;
+                _serviceResponse.Message = CustomMessage.Updated;
+            }
+            else
+            {
+                _serviceResponse.Success = false;
+                _serviceResponse.Message = CustomMessage.RecordNotFound;
+            }
+            return _serviceResponse;
+        }
+
+        public async Task<ServiceResponse<object>> GetAllNewTopping(int CompanyId)
+        {
+            var list = await (from m in _context.Toppings
+                              where m.CompanyId == CompanyId
+
+                              select new GetAllNewToppingDto
+                              {
+                                  Id = m.Id,
+                                  CompanyId = m.CompanyId,
+                                  Name = m.Name,
+                                  //CategoryId = m.CategoryId,
+                                  Price = m.Price,
+                                  //ItemSizeId = m.ItemSizeId,
+                                  // ItemId = m.ItemId,
+                                  CreatedById = m.CretedById,
+                                  DateCreated = m.DateCreated,
+                                  UpdatedById = m.UpdateById,
+                                  DateModified = m.DateModified,
+
+                              }).ToListAsync();
+
+            if (list.Count > 0)
+            {
+                _serviceResponse.Data = list;
+                _serviceResponse.Success = true;
+                _serviceResponse.Message = "Record Found";
+            }
+            else
+            {
+                _serviceResponse.Data = null;
+                _serviceResponse.Success = false;
+                _serviceResponse.Message = CustomMessage.RecordNotFound;
+            }
+            return _serviceResponse;
+        }
+        public async Task<ServiceResponse<object>> GetAllToppingById(int Id)
+        {
+            var list = await (from m in _context.Toppings
+                              where m.Id == Id
+
+                              select new GetAllNewToppingDto
+                              {
+                                  Id = m.Id,
+                                  CompanyId = m.CompanyId,
+                                  Name = m.Name,
+                                  //CategoryId = m.CategoryId,
+                                  Price = m.Price,
+                                  //ItemSizeId = m.ItemSizeId,
+                                  // ItemId = m.ItemId,
+                                  CreatedById = m.CretedById,
+                                  DateCreated = m.DateCreated,
+                                  UpdatedById = m.UpdateById,
+                                  DateModified = m.DateModified,
 
                               }).ToListAsync();
 

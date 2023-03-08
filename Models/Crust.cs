@@ -14,21 +14,12 @@ namespace PizzaOrder.Models
         public string Name { get; set; }
 
         [StringLength(250, ErrorMessage = "Description cannot be longer then 250 characters")]
-        public string? Description { get; set; }
+        public string Description { get; set; }
         public int Price { get; set; }
         public int ItemId { get; set; }
-        public int CategoryId { get; set; }
-
         public int ItemSizeId { get; set; }
+        public int CompanyId { get; set; }
 
-        [ForeignKey("ItemId")]
-        public virtual Item ObjItem { get; set; }
-
-        [ForeignKey("ItemSizeId")]
-        public virtual ItemSize ObjItemSize { get; set; }
-
-        [ForeignKey("CategoryId")]
-        public virtual Category ObjCategory { get; set; }
 
         [ForeignKey("CompanyId")]
         public virtual Company ObjCompany { get; set; }

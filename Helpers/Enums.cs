@@ -7,13 +7,15 @@ namespace PizzaOrder.Helpers
         public enum UserTypeId
         {     
             Admin = 1,
-            User,
+            SuperUser = 2 ,
+            User = 3,
+            Rider = 4,
         }
         public enum PaymentType
         {
             CashOnDelivery = 1,
-            JazzCash=2,
-            EasyPaisa=3,
+            JazzCash = 2,
+            EasyPaisa = 3,
           
         }
 
@@ -33,15 +35,22 @@ namespace PizzaOrder.Helpers
         }
         public enum OrderStatus
         {
-            PreOrder = 1, 
+            PreOrder = 1,
             Pending = 2, //Check Out
             NewOrder = 7, // when user checkout it sets the status New Order
             InProcess = 3,
-            Cancled = 5,
-            Delivered = 4,
+            OnTheWay = 5,
+            ReadyToDeliver = 4,
             Served = 8,
-            Billed =6,
+            Delivered =6,
             Paid = 9,
+            All = 10,
+        }
+
+        public enum ReferenceSection
+        {
+            Toppings = 1,
+            Crusts,
         }
 
         public enum SourceType

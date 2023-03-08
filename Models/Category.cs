@@ -10,6 +10,7 @@ namespace PizzaOrder.Models
     {
         public string Name { get; set; }
         public string  Description { get; set; }
+        public int CompanyId { get; set; }
 
         [ForeignKey("CompanyId")]
         public virtual Company ObjCompany { get; set; }

@@ -10,7 +10,6 @@ namespace PizzaOrder.Models
         
         public int SlideShowId { get; set; }
         public string FileName { get; set; }
-
         public string FilePath { get; set; }
 
         [ForeignKey("SlideShowId")]

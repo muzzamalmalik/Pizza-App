@@ -70,6 +70,27 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
+        [HttpGet("GetAllCompanyByLatLong")]
+        public async Task<IActionResult> GetAllCompanyByLatLong(int Range, double Lat, double Long)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.GetAllCompanyByLatLong(Range, Lat, Long);
 
+            return Ok(_response);
+        }
+        [HttpGet("SearchCompany/{SearchField}")]
+        public async Task<IActionResult> SearchCompany(string SearchField)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.SearchCompany(SearchField);
+
+            return Ok(_response);
+        }
     }
 }

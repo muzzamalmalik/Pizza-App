@@ -35,34 +35,13 @@ namespace PizzaOrder.Repository
 
         public async Task<ServiceResponse<object>> AddDealSectionDetail(AddDealSectionDetailDto dtoData)
         {
-            var objDealSectionDetail = await (from u in _context.DealSectionDetail
-                                        where u.CompanyId != dtoData.CompanyId
-
-                                        select new
-                                        {
-                                            DealId = u.DealId,
-                                            DealSectionId = u.DealSectionId,
-                                            ItemId = u.ItemId,
-                                            CompanyId = u.CompanyId,
-                                        }).FirstOrDefaultAsync();
-
-            if (objDealSectionDetail != null)
-            {
-                if (objDealSectionDetail.CompanyId > 0 && dtoData.CompanyId != objDealSectionDetail.CompanyId)
-                {
-                    _serviceResponse.Message = "This Company Id not exists";
-                }
-                _serviceResponse.Success = false;
-                _serviceResponse.Data = dtoData.CompanyId;
-            }
-            else
-            {
                 var DealSectionDetailToCreate = new DealSectionDetail
                 {
-                    DealId= dtoData.DealId,
+                    //DealId= dtoData.DealId,
                     DealSectionId = dtoData.DealSectionId,
                     ItemId = dtoData.ItemId,
-                    CompanyId = dtoData.CompanyId,
+                    CretedById = _LoggedIn_UserID,
+                    DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
                 };
 
                 await _context.DealSectionDetail.AddAsync(DealSectionDetailToCreate);
@@ -70,7 +49,6 @@ namespace PizzaOrder.Repository
                 //_serviceResponse.Data = DealSectionDetailToCreate;
                 _serviceResponse.Success = true;
                 _serviceResponse.Message = CustomMessage.Added;
-            }
 
             return _serviceResponse;
         }
@@ -80,10 +58,11 @@ namespace PizzaOrder.Repository
             var objdealsectiondetail = await _context.DealSectionDetail.FirstOrDefaultAsync(s => s.Id.Equals(id));
             if (objdealsectiondetail != null)
             {
-                objdealsectiondetail.DealId = dtoData.DealId;
+                //objdealsectiondetail.DealId = dtoData.DealId;
                 objdealsectiondetail.DealSectionId = dtoData.DealSectionId;
                 objdealsectiondetail.ItemId = dtoData.ItemId;
-                objdealsectiondetail.CompanyId = dtoData.CompanyId;
+                objdealsectiondetail.UpdateById = _LoggedIn_UserID;
+                objdealsectiondetail.DateModified = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow));
 
                 _context.DealSectionDetail.Update(objdealsectiondetail);
                 await _context.SaveChangesAsync();
@@ -98,35 +77,38 @@ namespace PizzaOrder.Repository
             return _serviceResponse;
         }
 
-        public async Task<ServiceResponse<object>> GetAllDealSectionDetail(int CompanyId)
-        {
-            var list = await (from m in _context.DealSectionDetail
-                              where m.CompanyId == CompanyId
+        //public async Task<ServiceResponse<object>> GetAllDealSectionDetail()
+        //{
+        //    var list = await (from m in _context.DealSectionDetail
+        //                      where Convert.ToInt32(_configuration.GetSection("AppSettings:CompanyId").Value) 
 
-                              select new GetAllDealSectionDetailDto
-                              {
-                                  Id = m.Id,
-                                  DealId = m.DealId,
-                                  DealSectionId = m.DealSectionId,
-                                  ItemId= m.ItemId,
-                                  ItemName = _context.Items.FirstOrDefault(x => x.Id == m.ItemId).Name,
-                                  CompanyId = m.CompanyId,
+        //                      select new GetAllDealSectionDetailDto
+        //                      {
+        //                          Id = m.Id,
+        //                          //DealId = m.DealId,
+        //                          DealSectionId = m.DealSectionId,
+        //                          ItemId= m.ItemId,
+        //                          ItemName = _context.Items.FirstOrDefault(x => x.Id == m.ItemId).Name,
+        //                          CreatedById = m.CretedById,
+        //                          DateCreated = m.DateCreated,
+        //                          UpdatedById = m.UpdateById,
+        //                          DateModified= m.DateModified,
 
-                              }).ToListAsync();
+        //                      }).ToListAsync();
 
-            if (list.Count > 0)
-            {
-                _serviceResponse.Data = list;
-                _serviceResponse.Success = true;
-                _serviceResponse.Message = "Record Found";
-            }
-            else
-            {
-                _serviceResponse.Data = null;
-                _serviceResponse.Success = false;
-                _serviceResponse.Message = CustomMessage.RecordNotFound;
-            }
-            return _serviceResponse;
-        }
+        //    if (list.Count > 0)
+        //    {
+        //        _serviceResponse.Data = list;
+        //        _serviceResponse.Success = true;
+        //        _serviceResponse.Message = "Record Found";
+        //    }
+        //    else
+        //    {
+        //        _serviceResponse.Data = null;
+        //        _serviceResponse.Success = false;
+        //        _serviceResponse.Message = CustomMessage.RecordNotFound;
+        //    }
+        //    return _serviceResponse;
+        //}
     }
 }

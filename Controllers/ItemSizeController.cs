@@ -47,14 +47,14 @@ namespace PizzaOrder.Controllers
             return Ok(_response);
         }
 
-        [HttpGet("GetAllItemSize/{CompanyId}")]
-        public async Task<IActionResult> GetAllItemSize(int CompanyId)
+        [HttpGet("GetAllItemSize")]
+        public async Task<IActionResult> GetAllItemSize()
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            _response = await _repo.GetAllItemSize(CompanyId);
+            _response = await _repo.GetAllItemSize();
 
             return Ok(_response);
         }

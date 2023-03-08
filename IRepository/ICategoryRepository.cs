@@ -8,7 +8,7 @@ namespace PizzaOrder.IRepository
     {
         Task<ServiceResponse<object>> AddCategory(AddCategoryDto dtoData);
         Task<ServiceResponse<object>> EditCategory(int id, EditCategoryDto dtoData);
-        Task<ServiceResponse<object>> GetAllCategories(int? companyId);
-        Task<ServiceResponse<object>> GetCategoryById(int id);
+        Task<ServiceResponse<object>> GetAllCategories(int CompanyId);
+        Task<ServiceResponse<object>> GetCategoryById(int id, int CompanyId);
     }
 }

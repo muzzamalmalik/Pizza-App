@@ -9,7 +9,7 @@ namespace PizzaOrder.IRepository
     {
         Task<ServiceResponse<Object>> AddItemSize(AddItemSizeDto dtoData);
         Task<ServiceResponse<object>> EditItemSize(int id, EditItemSizeDto dtoData);
-        Task<ServiceResponse<object>> GetAllItemSize(int CompanyId);
+        Task<ServiceResponse<object>> GetAllItemSize();
         Task<ServiceResponse<object>> GetItemSizeById(int id);
     }
 }

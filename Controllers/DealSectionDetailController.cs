@@ -47,16 +47,16 @@ namespace PizzaOrder.Controllers
             return Ok(_response);
         }
 
-        [HttpGet("GetAllDealSectionDetail/{CompanyId}")]
-        public async Task<IActionResult> GetAllDealSectionDetail(int CompanyId)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            _response = await _repo.GetAllDealSectionDetail(CompanyId);
+        //[HttpGet("GetAllDealSectionDetail/{CompanyId}")]
+        //public async Task<IActionResult> GetAllDealSectionDetail(int CompanyId)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+        //    _response = await _repo.GetAllDealSectionDetail(CompanyId);
 
-            return Ok(_response);
-        }
+        //    return Ok(_response);
+        //}
     }
 }

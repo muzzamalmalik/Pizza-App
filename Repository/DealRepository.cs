@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace PizzaOrder.Repository
@@ -33,81 +34,82 @@ namespace PizzaOrder.Repository
 
         public async Task<ServiceResponse<object>> AddDeal(AddDealDto dtoData)
         {
-            var objUser = await (from u in _context.Deals
-                                 where u.Title == dtoData.Title.Trim() && u.CompanyId == dtoData.CompanyId
+            //var objUser = await (from u in _context.Deals
+            //                     where u.Title == dtoData.Title.Trim() && u.CompanyId == dtoData.CompanyId
 
-                                 select new
-                                 {
-                                     Title = u.Title,
-                                     CompanyId = u.CompanyId,
-                                     Description = u.Description,
-                                 }).FirstOrDefaultAsync();
+            //                     select new
+            //                     {
+            //                         Title = u.Title,
+            //                         CompanyId = u.CompanyId,
+            //                         Description = u.Description,
+            //                     }).FirstOrDefaultAsync();
 
-            if (objUser != null)
+            if (dtoData != null)
             {
-                if (objUser.Title.Length > 0 && dtoData.Title.Trim() == objUser.Title)
+                //if (objUser.Title.Length > 0 && dtoData.Title.Trim() == objUser.Title)
+                //{
+                //    _serviceResponse.Message = "Deal with this name ALready Exists";
+                //}
+                //_serviceResponse.Success = false;
+                //_serviceResponse.Data = objUser.Title;
+
+
+
+                if (dtoData.ImageData != null && dtoData.ImageData.Length > 0)
                 {
-                    _serviceResponse.Message = "Deal with this name ALready Exists";
-                }
-                _serviceResponse.Success = false;
-                _serviceResponse.Data = objUser.Title;
-            }
-            else
-            if (dtoData.ImageData != null && dtoData.ImageData.Length > 0)
-            {
-                var pathToSave = Path.Combine(_HostEnvironment.WebRootPath, "DealImages");
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(dtoData.ImageData.FileName);
-                var fullPath = Path.Combine(pathToSave);
-                dtoData.FilePath = "DealImages";
-                dtoData.FileName = fileName;
-                if (!Directory.Exists(pathToSave))
-                {
-                    Directory.CreateDirectory(pathToSave);
-                }
-                var filePath = Path.Combine(_HostEnvironment.WebRootPath, "DealImages", fileName);
-                //string pathString = filePath.LastIndexOf("/") + 1;
-                try
-                {
-                    using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                    var pathToSave = Path.Combine(_HostEnvironment.WebRootPath, "DealImages");
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(dtoData.ImageData.FileName);
+                    var fullPath = Path.Combine(pathToSave);
+                    dtoData.FilePath = "DealImages";
+                    dtoData.FileName = fileName;
+                    if (!Directory.Exists(pathToSave))
                     {
-                        await dtoData.ImageData.CopyToAsync(stream);
+                        Directory.CreateDirectory(pathToSave);
                     }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                }
+                    var filePath = Path.Combine(_HostEnvironment.WebRootPath, "DealImages", fileName);
+                    //string pathString = filePath.LastIndexOf("/") + 1;
+                    try
+                    {
+                        using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                        {
+                            await dtoData.ImageData.CopyToAsync(stream);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
 
 
-                var ObjDeal = new Deal
-                {
-                    Title = dtoData.Title,
-                    Description = dtoData.Description,
-                    Price= dtoData.Price,
-                    Percentage= dtoData.Percentage,
-                    DiscountAmount = dtoData.DiscountAmount,
-                    FilePath = "DealImages",
-                    FileName = dtoData.FileName,
-                    CompanyId = dtoData.CompanyId,
-                    ActiveQueue = dtoData.ActiveQueue,
-                };
+                    var ObjDeal = new Deal
+                    {
+                        Title = dtoData.Title,
+                        Description = dtoData.Description,
+                        Price = dtoData.Price,
+                        Percentage = dtoData.Percentage,
+                        DiscountAmount = dtoData.DiscountAmount,
+                        FilePath = "DealImages",
+                        FileName = dtoData.FileName,
+                        CompanyId = dtoData.CompanyId,
+                        ActiveQueue = dtoData.ActiveQueue,
+                        CretedById = _LoggedIn_UserID,
+                        DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
+                    };
 
-                try
-                {
+
                     await _context.Deals.AddAsync(ObjDeal);
                     await _context.SaveChangesAsync();
                     //_serviceResponse.Data = ObjDeal;
                     _serviceResponse.Success = true;
                     _serviceResponse.Message = CustomMessage.Added;
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                }
-            }
 
+
+            }
             return _serviceResponse;
+
         }
+
 
         public async Task<ServiceResponse<object>> EditDeal(int id, EditDealDto dtoData)
         {
@@ -141,13 +143,18 @@ namespace PizzaOrder.Repository
 
                     objdeal.Title = dtoData.Title;
                     objdeal.Description = dtoData.Description;
-                    objdeal.Price= dtoData.Price;
-                    objdeal.Percentage= dtoData.Percentage;
-                    objdeal.DiscountAmount= dtoData.DiscountAmount;
+                    objdeal.Price = dtoData.Price;
+                    objdeal.Percentage = dtoData.Percentage;
+                    objdeal.DiscountAmount = dtoData.DiscountAmount;
                     objdeal.FilePath = dtoData.FilePath;
                     objdeal.FileName = dtoData.FileName;
                     objdeal.ActiveQueue = dtoData.ActiveQueue;
                     objdeal.CompanyId = dtoData.CompanyId;
+                    objdeal.UpdateById = _LoggedIn_UserID;
+                    //objdeal.DateModified = DateTime.Now;
+                    objdeal.DateModified = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow));
+                    //objdeal.DateModified = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.Now));
+                    // objdeal.DateModified = System.DateTime.ToLocalTime("YOUR TIME ZONE (e.g. Pakistan Standard Time)");
 
                     _context.Deals.Update(objdeal);
                     await _context.SaveChangesAsync();
@@ -164,51 +171,61 @@ namespace PizzaOrder.Repository
             return _serviceResponse;
         }
 
-        public async Task<ServiceResponse<object>> GetAllDeal(int CompanyId)
+        public async Task<ServiceResponse<object>> GetAllDeal(int CompanyId, int page, int pageSize)
         {
+            var listCount = _context.Deals.Where(x => x.CompanyId.Equals(CompanyId)).Select(p => p.Id).Count();
+
+            var skip = pageSize * (page - 1);
+            //var canPage = skip < listCount;
+
             var list = await (from m in _context.Deals
-                              where m.CompanyId == CompanyId
+                              where CompanyId == m.CompanyId
 
                               select new GetAllDealDto
                               {
                                   Id = m.Id,
-                                  CompanyId = m.CompanyId,
                                   Title = m.Title,
                                   Description = m.Description,
-                                  Price= m.Price,
+                                  Price = m.Price,
                                   Percentage = m.Percentage,
-                                  DiscountAmount= m.DiscountAmount,
+                                  DiscountAmount = m.DiscountAmount,
                                   ActiveQueue = m.ActiveQueue,
                                   FileName = m.FileName,
                                   FilePath = m.FilePath,
                                   FullPath = _configuration.GetSection("AppSettings:SiteUrl").Value + m.FilePath + '/' + m.FileName,
 
-                                  ObjGetAllDealSection = (from n in _context.DealSection where n.DealId == m.Id
-                                                          
+                                  ObjGetAllDealSection = (from n in _context.DealSection
+                                                          where n.DealId == m.Id
+
                                                           select new GetAllDealSectionDto
                                                           {
                                                               Id = n.Id,
                                                               DealId = n.DealId,
+                                                              Title = n.Title,
+                                                              Description = n.Description,
                                                               ChooseQuantity = n.ChooseQuantity,
-                                                              CompanyId = n.CompanyId,
                                                               CategoryId = n.CategoryId,
 
                                                           }).ToList(),
 
                                   ObjGetAllDealSectionDetail = (from o in _context.DealSectionDetail
-                                                                where o.DealId == m.Id
+                                                                where Convert.ToInt32(_configuration.GetSection("AppSettings:CompanyId").Value) == m.Id
 
                                                                 select new GetAllDealSectionDetailDto
                                                                 {
                                                                     Id = o.Id,
-                                                                    DealId = o.DealId,
+                                                                    //DealId = _configuration.GetSection("AppSettings:CompanyId").Value,
                                                                     DealSectionId = o.DealSectionId,
                                                                     ItemId = o.ItemId,
-                                                                    CompanyId = o.CompanyId,
 
                                                                 }).ToList(),
-
-                              }).ToListAsync();
+                                  CreatedById = m.CretedById,
+                                  DateCreated = m.DateCreated,
+                                  UpdatedById = m.UpdateById,
+                                  DateModified = m.DateModified,
+                              }).Skip(skip)
+                              .Take(pageSize)
+                              .ToListAsync();
 
             if (list.Count > 0)
             {
@@ -227,58 +244,55 @@ namespace PizzaOrder.Repository
 
         public async Task<ServiceResponse<object>> GetDealDetailsById(int id)
         {
-            var objdeal = (from m in _context.Deals
-                                 join n in _context.DealSection on m.Id equals n.DealId
-                                 where m.Id == id
-
-                                 select new GetDealDetailsByIdDto
-                                 {
-                                     Id = m.Id,
-                                     Title = m.Title,
-                                     Description = m.Description,
-                                     Price = m.Price,
-                                     Percentage = m.Percentage,
-                                     DiscountAmount = m.DiscountAmount,
-                                     FileName = m.FileName,
-                                     FilePath = m.FilePath,
-                                     FullPath = _configuration.GetSection("AppSettings:SiteUrl").Value + m.FilePath + '/' + m.FileName,
-                                     ActiveQueue = m.ActiveQueue,
-                                     CompanyId = m.CompanyId,
-                                     DealId = n.DealId,
-                                     ChooseQuantity = n.ChooseQuantity,
-
-                                     ObjGetAllFlavours = (from q in _context.Items
-                                                          where q.CategoryId == n.CategoryId
-
-                                                          select new GetAllFlavoursDto
-                                                          {
-                                                              Id = q.Id,
-                                                              FlavourName = q.Name,
-                                                              CategoryId = q.CategoryId,
-
-                                                          }).ToList(),
-
-
-                                     //ObjGetAllDealSectionDetail = (from o in _context.DealSectionDetail
-                                     //                              where o.DealId == objdeal.Id
-
-                                     //                              select new GetAllDealSectionDetailDto
-                                     //                              {
-                                     //                                  Id = o.Id,
-                                     //                                  DealId = o.DealId,
-                                     //                                  DealSectionId = o.DealSectionId,
-                                     //                                  ItemId = o.ItemId,
-                                     //                                  CompanyId = o.CompanyId,
-                                     //                                  ItemName = _context.Items.FirstOrDefault(x=>x.Id == o.ItemId).Name,
-
-                                     //                              }).ToList(),
-                                 });
-
-
+            var objdeal = await _context.Deals.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (objdeal != null)
             {
+                var data = new GetDealDetailsByIdDto
+                {
+                    Id = objdeal.Id,
+                    //CompanyId = objdeal.CompanyId,
+                    Title = objdeal.Title,
+                    Description = objdeal.Description,
+                    Price = objdeal.Price,
+                    Percentage = objdeal.Percentage,
+                    DiscountAmount = objdeal.DiscountAmount,
+                    ActiveQueue = objdeal.ActiveQueue,
+                    FileName = objdeal.FileName,
+                    FilePath = objdeal.FilePath,
+                    FullPath = _configuration.GetSection("AppSettings:SiteUrl").Value + objdeal.FilePath + '/' + objdeal.FileName,
 
-                _serviceResponse.Data = objdeal;
+                    ObjGetDealSection = (from m in _context.DealSection
+                                         where m.DealId == objdeal.Id
+
+                                         select new GetDealSectionDto
+                                         {
+                                             Id = m.Id,
+                                             DealId = m.DealId,
+                                             Title = m.Title,
+                                             ChooseQuantity = m.ChooseQuantity,
+                                             CategoryId = m.CategoryId,
+                                             Description = m.Description,
+
+                                             ObjGetAllFlavours = (from q in _context.DealSectionDetail
+                                                                  where q.DealSectionId == m.Id
+
+                                                                  select new GetAllFlavoursDto
+                                                                  {
+                                                                      Id = q.Id,
+                                                                      FlavourName = q.ObjItem.Name,
+                                                                      ItemId = q.ItemId,
+                                                                      Quantity = 0, 
+                                                                      
+                                                                  }).ToList(),
+                                         }).ToList(),
+
+                    CreatedById = objdeal.CretedById,
+                    DateCreated = objdeal.DateCreated,
+                    UpdatedById = objdeal.UpdateById,
+                    DateModified = objdeal.DateModified,
+                };
+
+                _serviceResponse.Data = data;
                 _serviceResponse.Success = true;
                 _serviceResponse.Message = "Record Found";
             }

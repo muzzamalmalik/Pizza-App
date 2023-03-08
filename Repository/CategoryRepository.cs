@@ -32,13 +32,12 @@ namespace PizzaOrder.Repository
         public async Task<ServiceResponse<object>> AddCategory(AddCategoryDto dtoData)
         {
             var objUser = await (from u in _context.Category
-                        where u.Name == dtoData.Name.Trim()
-                        && u.CompanyId == _LoggedIn_CompanyId
+                        where u.Name == dtoData.Name.Trim() && u.CompanyId == u.CompanyId
 
                         select new
                         {
                             Name = u.Name,
-                            CompanyId = _LoggedIn_CompanyId,
+                            CompanyId = u.CompanyId,
                             Description = u.Description,
                         }).FirstOrDefaultAsync();
 
@@ -57,7 +56,9 @@ namespace PizzaOrder.Repository
                 {
                      Name = dtoData.Name,
                     Description = dtoData.Description,
-                    CompanyId = _LoggedIn_CompanyId,
+                    CompanyId = dtoData.CompanyId,
+                    CretedById = _LoggedIn_UserID,
+                    DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
                 };
 
                 await _context.Category.AddAsync(CategoryToCreate);
@@ -77,7 +78,8 @@ namespace PizzaOrder.Repository
             {
                 objcategory.Name = dtoData.Name;
                 objcategory.Description = dtoData.Description;
-                objcategory.CompanyId = _LoggedIn_CompanyId;
+                objcategory.UpdateById = _LoggedIn_UserID;
+                objcategory.DateModified = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow));
 
                 _context.Category.Update(objcategory);
                 await _context.SaveChangesAsync();
@@ -92,10 +94,10 @@ namespace PizzaOrder.Repository
             return _serviceResponse;
         }
 
-        public async Task<ServiceResponse<object>> GetAllCategories(int? companyId)
+        public async Task<ServiceResponse<object>> GetAllCategories(int CompanyId)
         {
             var list = await (from m in _context.Category
-                              where m.CompanyId == (_LoggedIn_CompanyId > 0 ? _LoggedIn_CompanyId : companyId) 
+                              where CompanyId == m.CompanyId
 
                               select new GetAllCategoryDto
                               {
@@ -103,6 +105,11 @@ namespace PizzaOrder.Repository
                                   CompanyId = m.CompanyId,
                                   CategoryName = m.Name,
                                   CategoryDescription = m.Description,
+                                  ItemsCount = _context.Items.Where(x =>x.CategoryId == m.Id).Count(),
+                                  CreatedById = m.CretedById,
+                                  DateCreated = m.DateCreated,
+                                  UpdatedById = m.UpdateById,
+                                  DateModified = m.DateModified,
 
                                   //objGetAllItem = (from n in _context.Items where n.CategoryId == m.Id
 
@@ -152,17 +159,22 @@ namespace PizzaOrder.Repository
             return _serviceResponse;
         }
 
-        public async Task<ServiceResponse<object>> GetCategoryById(int id)
+        public async Task<ServiceResponse<object>> GetCategoryById(int id, int CompanyId)
         {
-            var objcategory = await _context.Category.FirstOrDefaultAsync(x => x.Id.Equals(id));
-            if (objcategory != null)
+            var List =  await (from x in _context.Category where id == x.Id && CompanyId == x.CompanyId select x).FirstOrDefaultAsync();
+            if (List != null)
             {
                 var data = new GetCategoryByIdDto
                 {
-                    Id = objcategory.Id,
-                    Name = objcategory.Name,
-                    Description = objcategory.Description,
-                    CompanyId = objcategory.CompanyId,
+                    Id = List.Id,
+                    Name = List.Name,
+                    Description = List.Description,
+                    ItemsCount = _context.Items.Where(x => x.CategoryId == List.Id).Count(),
+                    CompanyId = List.CompanyId,
+                    CreatedById = List.CretedById,
+                    DateCreated = List.DateCreated,
+                    UpdatedById = List.UpdateById,
+                    DateModified = List.DateModified,
                 };
 
                 _serviceResponse.Data = data;

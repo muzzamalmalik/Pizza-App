@@ -49,7 +49,7 @@ namespace PizzaOrder.Controllers
         }
 
         [HttpPut("EditOrderDetail/{id}")]
-        public async Task<IActionResult> EditOrderDetail(int id, EditOrderDetailDto model)
+        public async Task<IActionResult> EditOrderDetail(int id, OrderDetailDto model)
         {
             if (!ModelState.IsValid)
             {
@@ -60,14 +60,14 @@ namespace PizzaOrder.Controllers
             return Ok(_response);
         }
 
-        [HttpGet("GetAllOrderDetail/{CompanyId}")]
-        public async Task<IActionResult> GetAllOrderDetail(int CompanyId)
+        [HttpGet("GetAllOrderDetail")]
+        public async Task<IActionResult> GetAllOrderDetail()
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            _response = await _repo.GetAllOrderDetail(CompanyId);
+            _response = await _repo.GetAllOrderDetail();
 
             return Ok(_response);
         }
@@ -85,7 +85,7 @@ namespace PizzaOrder.Controllers
         }
 
         [HttpDelete("DeleteOrderDetailById/{id}")]
-        public async Task<IActionResult> DeleteOrderDetailById(int id)
+        public async Task<IActionResult> DeleteOrderDetailById(string id)
         {
             if (!ModelState.IsValid)
             {

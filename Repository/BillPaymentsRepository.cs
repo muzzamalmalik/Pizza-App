@@ -59,12 +59,14 @@ namespace PizzaOrder.Repository
                     BillId = dtoData.BillId,
                     OrderId= dtoData.OrderId,
                     PaymentMode = dtoData.PaymentMode,
-                    PaymentDate = DateTime.Now,
+                    PaymentDate = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
                     TransactionReference = dtoData.TransactionReference,
                     FileName = dtoData.FileName,
                     FilePath = dtoData.FilePath,
                     Active = true,
                     CompanyId= dtoData.CompanyId,
+                    CretedById = _LoggedIn_UserID,
+                    DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
                 };
                 await _context.BillPayments.AddAsync(objBillPayments);
                 await _context.SaveChangesAsync();
@@ -88,14 +90,17 @@ namespace PizzaOrder.Repository
                                   BillId = m.BillId,
                                   OrderId = m.OrderId,
                                   PaymentMode = m.PaymentMode,
-                                  PaymentDate = DateTime.Now,
+                                  PaymentDate = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
                                   TransactionReference = m.TransactionReference,
                                   FileName = m.FileName,
                                   FilePath = m.FilePath,
                                   FullPath = _configuration.GetSection("AppSettings:SiteUrl").Value + m.FilePath + '/' + m.FileName,
                                   Active = m.Active,
                                   CompanyId = m.CompanyId,
-
+                                  CreatedById = m.CretedById,
+                                  DateCreated = m.DateCreated,
+                                  UpdatedById = m.UpdateById,
+                                  DateModified = m.DateModified,
                               }).ToListAsync();
 
             if (list.Count > 0)
@@ -131,6 +136,10 @@ namespace PizzaOrder.Repository
                     FullPath = _configuration.GetSection("AppSettings:SiteUrl").Value + objbillpayments.FilePath + '/' + objbillpayments.FileName,
                     Active = objbillpayments.Active,
                     CompanyId = objbillpayments.CompanyId,
+                    CreatedById = objbillpayments.CretedById,
+                    DateCreated = objbillpayments.DateCreated,
+                    UpdatedById = objbillpayments.UpdateById,
+                    DateModified = objbillpayments.DateModified,
                 };
 
                 _serviceResponse.Data = data;

@@ -60,5 +60,39 @@ namespace PizzaOrder.Controllers
             return Ok(_response);
         }
 
+        [HttpPost("AddFeaturedAds")]
+        public async Task<IActionResult> AddFeaturedAds([FromForm] AddFeaturedAdsDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.AddFeaturedAds(model);
+
+            return Ok(_response);
+        }
+        [HttpGet("GetAllFeaturedAds/{Lat}/{Long}/{Range}")]
+        public async Task<IActionResult> GetAllFeaturedAds(double Lat, double Long, int Range)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.GetAllFeaturedAds(Lat,Long,Range);
+
+            return Ok(_response);
+        }
+        [HttpPut("EditFeaturedAds/{id}")]
+        public async Task<IActionResult> EditFeaturedAds(int id, [FromForm] EditFeaturedAdsDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _response = await _repo.EditFeaturedAds(id, model);
+
+            return Ok(_response);
+        }
     }
 }

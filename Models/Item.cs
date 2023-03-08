@@ -24,6 +24,7 @@ namespace PizzaOrder.Models
         public string FilePath { get; set; }
 
         public int CategoryId { get; set; }
+        public int CompanyId { get; set; }
 
         public bool ActiveQueue { get; set; }
 

@@ -131,7 +131,7 @@ namespace PizzaOrder.Dtos
 
     }
 
-        public class UserForDetailsDto : BaseDto
+    public class UserForDetailsDto : BaseDto
     {
         public int Id { get; set; }
         public string FullPath { get; set; }

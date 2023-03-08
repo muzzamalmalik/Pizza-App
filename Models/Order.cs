@@ -12,9 +12,13 @@ namespace PizzaOrder.Models
         public int OrderStatus { get; set; }
         public int UserId { get; set; }
         public string PaymentMethodType { get; set; }
-        public string DeliveryAddress { get; set; }
         public int TotalAmount { get; set; }
-        public int DeliveryCharges { get; set; }
+        public int? DeliveryCharges { get; set; }
+        public string Instructions { get; set; }
+        public string DeliveryAddress { get; set; }
+        public DateTime EstimatedDeliveryTime { get; set; }
+        public int CompanyId { get; set; }
+        public int RiderId { get; set; }
 
         [ForeignKey("UserId")]
         public virtual User ObjUser { get; set; }

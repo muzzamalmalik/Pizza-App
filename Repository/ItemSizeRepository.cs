@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.OpenApi.Writers;
 using PizzaOrder.Context;
 using PizzaOrder.Dtos;
 using PizzaOrder.Helpers;
@@ -37,7 +38,7 @@ namespace PizzaOrder.Repository
             var objItemSize = await (from a in _context.ItemSize
                                      where a.SizeDescription == dtoData.SizeDescription.Trim()
                                      && a.ItemId == dtoData.ItemId
-                                     && a.CompanyId == dtoData.CompanyId
+                                     && a.CompanyId == Convert.ToInt32(_configuration.GetSection("AppSettings:CompanyId").Value)
 
                                      select new
                                      {
@@ -63,7 +64,9 @@ namespace PizzaOrder.Repository
                     SizeDescription = dtoData.SizeDescription,
                     Price= dtoData.Price,
                     ItemId = dtoData.ItemId,    
-                    CompanyId = dtoData.CompanyId,
+                    CompanyId = Convert.ToInt32(_configuration.GetSection("AppSettings:CompanyId").Value),
+                    CretedById = _LoggedIn_UserID,
+                    DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
                 };
                 try 
                 {
@@ -91,6 +94,8 @@ namespace PizzaOrder.Repository
                 objitemsize.Price= dtoData.Price;
                 objitemsize.ItemId= dtoData.ItemId;
                 objitemsize.CompanyId= dtoData.CompanyId;
+                objitemsize.UpdateById = _LoggedIn_UserID;
+                objitemsize.DateModified = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow))  ;
 
                  _context.ItemSize.Update(objitemsize);
                  await _context.SaveChangesAsync();
@@ -106,9 +111,9 @@ namespace PizzaOrder.Repository
             return _serviceResponse;
         }
 
-        public async Task<ServiceResponse<object>> GetAllItemSize(int CompanyId)
+        public async Task<ServiceResponse<object>> GetAllItemSize()
         {
-            var list = await (from a in _context.ItemSize where a.CompanyId == CompanyId
+            var list = await (from a in _context.ItemSize where a.CompanyId == Convert.ToInt32(_configuration.GetSection("AppSettings:CompanyId").Value)
 
                               select new GetAllItemSizeDto
                               {
@@ -117,6 +122,10 @@ namespace PizzaOrder.Repository
                                   Price = a.Price,
                                   ItemId= a.ItemId,
                                   CompanyId= a.CompanyId,
+                                  CreatedById = a.CretedById,
+                                  DateCreated = a.DateCreated,
+                                  UpdatedById = a.UpdateById,
+                                  DateModified = a.DateModified,
                               }).ToListAsync();
 
             if (list.Count > 0)
@@ -135,7 +144,7 @@ namespace PizzaOrder.Repository
         }
         public async Task<ServiceResponse<object>> GetItemSizeById(int id)
         {
-            var objitemsize = await _context.ItemSize.FirstOrDefaultAsync(x => x.Id.Equals(id));
+            var objitemsize = await _context.ItemSize.Where(x => x.Id.Equals(id) && x.CompanyId == Convert.ToInt32(_configuration.GetSection("AppSettings:CompanyId").Value)).FirstOrDefaultAsync();
             if (objitemsize != null)
             {
                 var data = new GetItemSizeByIdDto
@@ -145,6 +154,10 @@ namespace PizzaOrder.Repository
                     Price = objitemsize.Price,
                     ItemId = objitemsize.ItemId,
                     CompanyId = objitemsize.CompanyId,
+                    CreatedById = objitemsize.CretedById,
+                    DateCreated = objitemsize.DateCreated,
+                    UpdatedById = objitemsize.UpdateById,
+                    DateModified = objitemsize.DateModified,
                 };
 
                 _serviceResponse.Data = data;

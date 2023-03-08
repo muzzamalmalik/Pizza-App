@@ -61,5 +61,53 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
+        [HttpPost("AddNewCrust")]
+        public async Task<IActionResult> AddCrust(AddNewCrustDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _response = await _repo.AddNewCrust(model);
+
+            return Ok(_response);
+        }
+
+        [HttpPut("EditNewCrust/{id}")]
+        public async Task<IActionResult> EditNewCrust(int id, EditNewCrustDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _response = await _repo.EditNewCrust(id, model);
+
+            return Ok(_response);
+        }
+
+        [HttpGet("GetAllNewCrust/{CompanyId}")]
+        public async Task<IActionResult> GetAllNewCrust(int CompanyId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.GetAllNewCrust(CompanyId);
+
+            return Ok(_response);
+        }
+        [HttpGet("GetAllCrustbyId/{Id}")]
+        public async Task<IActionResult> GetAllCrustbyId(int Id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.GetAllCrustbyId(Id);
+
+            return Ok(_response);
+        }
     }
 }

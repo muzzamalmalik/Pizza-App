@@ -8,16 +8,15 @@ namespace PizzaOrder.Models
 {
     public class DealSectionDetail : BaseEntity
     {
-        public int DealId { get; set; }
+        
         public int DealSectionId { get; set; }
         public int ItemId { get; set; }
-
-    
 
         [ForeignKey("DealSectionId")]
         public virtual DealSection ObjDealSection { get; set; }
 
         [ForeignKey("ItemId")]
-        public virtual Item  ObjItem { get; set; }
+        public virtual Item ObjItem { get; set; }
+
     }
 }

@@ -19,6 +19,8 @@ namespace PizzaOrder.Helpers
             Name = name;
         }
     }
+
+ 
     public class ControllerNameAttributeConvention : IControllerModelConvention
     {
         public void Apply(ControllerModel controller)
@@ -138,6 +140,16 @@ namespace PizzaOrder.Helpers
         //    var dt = Now.ToString("dd-MM-yyyy hh:mm:ss tt");
         //    return dt;
         //}
+
+        public static double deg2rad(double deg)
+        {
+            return (deg * Math.PI / 180.0);
+        }
+
+        public static double rad2deg(double rad)
+        {
+            return (rad * 180.0 / Math.PI);
+        }
         public static string To24HRTime(this TimeSpan timeSpan)
         {
             string shortForm = "";

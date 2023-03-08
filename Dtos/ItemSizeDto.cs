@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PizzaOrder.Dtos
 {
@@ -28,6 +29,10 @@ namespace PizzaOrder.Dtos
         public int Price { get; set; }
         public int ItemId { get; set; }
         public int CompanyId { get; set; }
+        public int CreatedById { get; set; }
+        public int? UpdatedById { get; set; }
+        public DateTime DateCreated { get; set; }
+        public DateTime? DateModified { get; set; }
     }
 
     public class GetItemSizeByIdDto
@@ -37,5 +42,9 @@ namespace PizzaOrder.Dtos
         public int Price { get; set; }
         public int ItemId { get; set; }
         public int CompanyId { get; set; }
+        public int CreatedById { get; set; }
+        public int? UpdatedById { get; set; }
+        public DateTime DateCreated { get; set; }
+        public DateTime? DateModified { get; set; }
     }
 }

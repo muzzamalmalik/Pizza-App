@@ -47,13 +47,13 @@ namespace PizzaOrder.Controllers
         }
 
         [HttpGet("GetAllDeal/{CompanyId}")]
-        public async Task<IActionResult> GetAllDeal(int CompanyId)
+        public async Task<IActionResult> GetAllDeal(int CompanyId, int page, int pageSize)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            _response = await _repo.GetAllDeal(CompanyId);
+            _response = await _repo.GetAllDeal(CompanyId,page,pageSize);
 
             return Ok(_response);
         }

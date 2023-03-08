@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using PizzaOrder.Dtos;
+using PizzaOrder.Helpers;
 using PizzaOrder.IRepository;
 using System.Threading.Tasks;
 
@@ -46,14 +47,26 @@ namespace PizzaOrder.Controllers
             return Ok(_response);
         }
 
-        [HttpGet("GetAllOrder")]
-        public async Task<IActionResult> GetAllOrder()
+        //[HttpGet("GetAllOrder/{OrderStatus}")]
+        //public async Task<IActionResult> GetAllOrder(int OrderStatus)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+        //    _response = await _repo.GetAllOrder(OrderStatus);
+
+        //    return Ok(_response);
+        //}
+
+        [HttpGet("GetOrderById/{id}/{orderStatus}")]
+        public async Task<IActionResult> GetOrderById(int id, int orderStatus, int page, int pageSize)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            _response = await _repo.GetAllOrder();
+            _response = await _repo.GetOrderById(id, orderStatus, page, pageSize);
 
             return Ok(_response);
         }
@@ -70,27 +83,63 @@ namespace PizzaOrder.Controllers
             return Ok(_response);
         }
 
-        [HttpPost("AddCheckOutDetails")]
-        public async Task<IActionResult> AddCheckOutDetails(AddCheckOutDetailsDto dtoData)
+        [HttpPost("ProcessOrder")]
+        public async Task<IActionResult> ProcessOrder(AddProcessOrderDto dtoData)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _response = await _repo.AddCheckOutDetails(dtoData);
+            _response = await _repo.ProcessOrder(dtoData);
 
             return Ok(_response);
         }
 
-        [HttpGet("GetPaymentType/{id}")]
-        public async Task<IActionResult> GetPaymentType(int id)
+        [HttpGet("GetPaymentType")]
+        public async Task<IActionResult> GetPaymentType()
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            _response = await _repo.GetPaymentType(id);
+            _response = await _repo.GetPaymentType();
+
+            return Ok(_response);
+        }
+
+
+        [HttpGet("GetOrderForRider/{CompanyId}")]
+        public async Task<IActionResult> GetOrderForRider(int CompanyId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.GetOrderForRider(CompanyId);
+
+            return Ok(_response);
+        }
+        [HttpPut("RiderStuatusUpdate")]
+        public async Task<IActionResult> RiderStuatusUpdate(AddProcessOrderDto dtoData)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _response = await _repo.RiderStuatusUpdate(dtoData);
+
+            return Ok(_response);
+        }
+        [HttpGet("GetOrderByCompany/{CompanyId}/{orderStatus}")]
+        public async Task<IActionResult> GetOrderByCompany(int CompanyId, int orderStatus, int page, int pageSize)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.GetOrderByCompany(CompanyId, orderStatus, page, pageSize);
 
             return Ok(_response);
         }

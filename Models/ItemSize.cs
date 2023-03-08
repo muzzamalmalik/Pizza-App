@@ -15,6 +15,7 @@ namespace PizzaOrder.Models
         public string  SizeDescription { get; set; }
         public int ItemId { get; set; }
         public int Price { get; set; }
+        public int CompanyId { get; set; }
 
         [ForeignKey("ItemId")]
         public virtual Item ObjItem { get; set; }

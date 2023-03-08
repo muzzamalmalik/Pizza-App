@@ -72,10 +72,9 @@ namespace PizzaOrder.Controllers
 
             model.Username = model.Username.ToLower();
 
-            if (await _repo.UserExists(model.Username))
-                return BadRequest(new { message = CustomMessage.UserAlreadyExist });
+           
 
-            _response = await _repo.EditUser(id,model);
+            _response = await _repo.EditUser(id,model);    
 
             return Ok(_response);
 
@@ -105,6 +104,19 @@ namespace PizzaOrder.Controllers
             return Ok(_response);
         }
 
+
+        [HttpGet("GetAdminlogoAndBrandLogoData/{CompanyId}")]
+        public async Task<IActionResult> GetAdminlogoAndBrandLogoData(int CompanyId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.GetAdminlogoAndBrandLogoData(CompanyId);
+
+            return Ok(_response);
+        }
+
         [HttpPut("EditUserImagebyApp/{id}")]
         public async Task<IActionResult> EditUserImagebyApp(int id, [FromForm] UserForEditDtoAdd model)
         {
@@ -126,7 +138,7 @@ namespace PizzaOrder.Controllers
                 return BadRequest(ModelState);
             }
 
-            var  userFromRepo = await   _repo.Login(userForLoginDto);
+            var  userFromRepo = await  _repo.Login(userForLoginDto);
 
             if (userFromRepo == null)
             {
