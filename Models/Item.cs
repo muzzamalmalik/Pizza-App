@@ -25,8 +25,10 @@ namespace PizzaOrder.Models
 
         public int CategoryId { get; set; }
         public int CompanyId { get; set; }
-
+        public int ItemSizeId { get; set; }
+        public int Price { get; set; }
         public bool ActiveQueue { get; set; }
+        public bool IsActive { get; set; }
 
         [ForeignKey("CategoryId")]
         public virtual Category ObjCategory { get; set; }

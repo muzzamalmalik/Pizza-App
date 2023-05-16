@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using PizzaOrder.Dtos;
+using PizzaOrder.Helpers;
 using PizzaOrder.IRepository;
 using System.Threading.Tasks;
 
 namespace PizzaOrder.Controllers
 {
+    [Authorize(Roles = AppRoles.Admin_Only)]
     public class DealSectionController : BaseApiController
     {
         private readonly IDealSectionRepository _repo;
@@ -45,7 +47,17 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
+        [HttpDelete("DeleteDealSectionById/{id}")]
+        public async Task<IActionResult> DeleteDealSectionById(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.DeleteDealSectionById(id);
 
+            return Ok(_response);
+        }
         //[HttpGet("GetAllDealSection{CompanyId}")]
         //public async Task<IActionResult> GetAllDealSection(int CompanyId)
         //{

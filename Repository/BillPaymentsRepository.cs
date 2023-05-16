@@ -30,7 +30,6 @@ namespace PizzaOrder.Repository
             _mapper = mapper;
             _HostEnvironment = HostEnvironment;
         }
-
         public async Task<ServiceResponse<object>> AddBillPayments(AddBillPaymentsDto dtoData)
         {
             if (dtoData != null)
@@ -77,8 +76,6 @@ namespace PizzaOrder.Repository
             }
             return _serviceResponse;
         }
-
-
         public async Task<ServiceResponse<object>> GetAllBillPayments(int CompanyId)
         {
             var list = await (from m in _context.BillPayments
@@ -117,7 +114,6 @@ namespace PizzaOrder.Repository
             }
             return _serviceResponse;
         }
-
         public async Task<ServiceResponse<object>> GetBillPaymentsById(int id)
         {
             var objbillpayments = await _context.BillPayments.FirstOrDefaultAsync(x => x.Id.Equals(id));

@@ -12,6 +12,7 @@ namespace PizzaOrder.Dtos
         public string Name { get; set; }
         public string Description { get; set; }
         public int CompanyId { get; set; }
+        public bool IsActive { get; set; }
     }
 
     public class EditCategoryDto
@@ -19,6 +20,7 @@ namespace PizzaOrder.Dtos
         public string Name { get; set; }
         public string Description { get; set; }
         public int CompanyId { get; set; }
+        public bool IsActive { get; set; }
     }
 
 
@@ -30,10 +32,11 @@ namespace PizzaOrder.Dtos
         public int? ItemsCount { get; set; }
         public int CompanyId { get; set; }
         public int CreatedById { get; set; }
+        public bool IsActive { get; set; }
         public int? UpdatedById { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
-        //public List<GetAllItemDto> objGetAllItem { get; set; }
+        public List<GetAllItemDto> objGetAllItem { get; set; }
     }
     public class GetCategoryByIdDto
     {
@@ -44,6 +47,7 @@ namespace PizzaOrder.Dtos
         public int CompanyId { get; set; }
         public int CreatedById { get; set; }
         public int? UpdatedById { get; set; }
+        public bool IsActive { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
     }

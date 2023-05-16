@@ -22,6 +22,7 @@ namespace PizzaOrder.Repository
             _LoggedIn_UserTypeId = Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirstValue(Enums.ClaimType.UserTypeId.ToString()));
             _LoggedIn_UserName = httpContextAccessor.HttpContext.User.FindFirstValue(Enums.ClaimType.Name.ToString())?.ToString();
             _LoggedIn_CompanyId = Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirstValue(Enums.ClaimType.CompanyId.ToString()));
+            _LoggedIn_UserRole = httpContextAccessor.HttpContext.User.FindFirstValue(Enums.ClaimType.Role.ToString());
 
             _serviceResponse = new ServiceResponse<object>();
             _context = context;

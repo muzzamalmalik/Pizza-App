@@ -13,9 +13,9 @@ namespace PizzaOrder.Models
         [Required]
         [StringLength(250, ErrorMessage = "Title cannot be longer then 250 characters")]
         public string Title { get; set; }
-        [Required]
+       // [Required]
         [StringLength(250, ErrorMessage = "Description cannot be longer then 250 characters")]
-        public string  Description { get; set; }
+        public   string? Description { get; set; }
         public int Price { get; set; }
         public int? Percentage { get; set; }
         public int? DiscountAmount { get; set; }
@@ -29,6 +29,8 @@ namespace PizzaOrder.Models
         public int CompanyId { get; set; }
         [ForeignKey("CompanyId")]
         public virtual Company ObjCompany { get; set; }
+        public bool IsActive { get; set; }
+
 
     }
 }

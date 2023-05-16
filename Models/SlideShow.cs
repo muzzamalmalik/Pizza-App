@@ -8,7 +8,6 @@ namespace PizzaOrder.Models
 {
     public class SlideShow : BaseEntity
     {
-        public string ImageDescription { get; set; }
         public int CompanyId { get; set; }
 
         [ForeignKey("CompanyId")]

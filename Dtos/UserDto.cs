@@ -48,6 +48,7 @@ namespace PizzaOrder.Dtos
         public string FullName { get; set; }
         public string ContactNumber { get; set; }
         public string Email { get; set; }
+        public string Role { get; set; }
         public int UserTypeId { get; set; }
         public byte[] PasswordHash { get; set; }
 
@@ -226,7 +227,56 @@ namespace PizzaOrder.Dtos
     public class Rlogo
     { public string RestaurantlogoFullPath { get; set; } }
 
+    public class AddUserDto
+    {
+        [Required]
+        public string FullName { get; set; }
+        [Required]
+        [StringLength(30, ErrorMessage = "Contact Number is not loger then 30 characters")]
+        public string ContactNumber { get; set; }
+        public string Email { get; set; }
+        public string Address { get; set; }
+        public int? UserTypeId { get; set; }
+        public bool Active { get; set; }
+        public string FileName { get; set; }
+        public string FilePath { get; set; }
+        [Required]
+        public IFormFile ImageData { get; set; }
+    }
+    public class EditUserDto
+    {
+        [Required]
+        public string FullName { get; set; }
+        [Required]
+        [StringLength(30, ErrorMessage = "Contact Number is not loger then 30 characters")]
+        public string ContactNumber { get; set; }
+        public string Email { get; set; }
+        public string Address { get; set; }
+        public int? UserTypeId { get; set; }
+        public bool Active { get; set; }
+        public int CompanyId { get; set; }
+        public string FileName { get; set; }
+        public string FilePath { get; set; }
+        public IFormFile ImageData { get; set; }
+    }
+    public class GetAllUsersDetailDto
+    {
 
+        public int Id { get; set; }
+        public string FullName { get; set; }
+        public string ContactNumber { get; set; }
+        public string Email { get; set; }
+        public string Address { get; set; }
+        public string Password { get; set; }
+        public string Role { get; set; }
+        public int UserTypeId { get; set; }
+        public bool Active { get; set; }
+        public int CompanyId { get; set; } 
+        public string FullPath { get; set; }
+        public string FilePath { get; set; }
+       
+
+    }
 
 }
 

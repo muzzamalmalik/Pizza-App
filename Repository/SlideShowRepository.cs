@@ -31,17 +31,14 @@ namespace PizzaOrder.Repository
             _mapper = mapper;
             _HostEnvironment = HostEnvironment;
         }
-
         public async Task<ServiceResponse<object>> AddSlideShow(SlideShowAddDto dtoData)
         {
             if (dtoData != null)
             {
-
                 var ObjSlideShow = new SlideShow
                 {
                     //Id = dtoData.Id,
-                    ImageDescription = dtoData.ImageDescription,
-                    CompanyId = dtoData.CompanyId,
+                    CompanyId =_LoggedIn_CompanyId,
                     CretedById = _LoggedIn_UserID,
                     DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
                 };
@@ -49,8 +46,6 @@ namespace PizzaOrder.Repository
                 await _context.SlideShow.AddAsync(ObjSlideShow);
                 await _context.SaveChangesAsync();
                 _serviceResponse.Data = ObjSlideShow.Id;
-
-
 
                 if (dtoData.ImageData != null)
                 {
@@ -79,13 +74,13 @@ namespace PizzaOrder.Repository
                             Console.WriteLine(ex);
                         }
 
-
-
                         var ObjSlideShowImages = new SlideShowImages
                         {
                             FilePath = "SliderImages",
                             FileName = dtoData.FileName,
                             SlideShowId = ObjSlideShow.Id,
+                            ImageDescription = dtoData.ImageDescription,
+                            Heading = dtoData.Heading,
                             CretedById = _LoggedIn_UserID,
                             DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
                         };
@@ -103,23 +98,22 @@ namespace PizzaOrder.Repository
             return _serviceResponse;
         }
 
-        public async Task<ServiceResponse<object>> EditSlideShow(int id, int imageid, SlideShowEditDto dtoData)
+        public async Task<ServiceResponse<object>> EditSlideShow(int ImageId, SlideShowEditDto dtoData)
         {
-            var ObjSlideShow = await _context.SlideShow.FirstOrDefaultAsync(s => s.Id.Equals(id));
-            if (ObjSlideShow != null)
-            {
-                //ObjSlideShow.Id = dtoData.Id;
-                ObjSlideShow.ImageDescription = dtoData.ImageDescription;
-                ObjSlideShow.CompanyId = dtoData.CompanyId;
-                ObjSlideShow.UpdateById = _LoggedIn_UserID;
-                ObjSlideShow.DateModified = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow));
+            //var ObjSlideShow = await _context.SlideShow.FirstOrDefaultAsync(s => s.Id.Equals(id));
+            //if (ObjSlideShow != null)
+            //{
+            //    //ObjSlideShow.Id = dtoData.Id;
+            //    ObjSlideShow.CompanyId = dtoData.CompanyId;
+            //    ObjSlideShow.UpdateById = _LoggedIn_UserID;
+            //    ObjSlideShow.DateModified = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow));
 
-                _context.SlideShow.Update(ObjSlideShow);
-                await _context.SaveChangesAsync();
-                _serviceResponse.Data = ObjSlideShow.Id;
-            }
+            //    _context.SlideShow.Update(ObjSlideShow);
+            //    await _context.SaveChangesAsync();
+            //    _serviceResponse.Data = ObjSlideShow.Id;
+            //}
 
-            var ObjSlideShowImages = await _context.SlideShowImages.FirstOrDefaultAsync(x => x.Id.Equals(imageid));
+            var ObjSlideShowImages = await _context.SlideShowImages.FirstOrDefaultAsync(x => x.Id.Equals(ImageId));
             if (ObjSlideShowImages != null)
             {
                 if (dtoData.ImageData != null && dtoData.ImageData.Length > 0)
@@ -146,18 +140,26 @@ namespace PizzaOrder.Repository
                     {
                         Console.WriteLine(ex);
                     }
-
-                    ObjSlideShowImages.FilePath = dtoData.FilePath;
-                    ObjSlideShowImages.FileName = dtoData.FileName;
-                    ObjSlideShowImages.SlideShowId = dtoData.SlideShowId;
-                    ObjSlideShowImages.UpdateById = _LoggedIn_UserID;
-                    ObjSlideShowImages.DateModified = DateTime.UtcNow;
-
-                    _context.SlideShowImages.Update(ObjSlideShowImages);
-                    await _context.SaveChangesAsync();
-                    _serviceResponse.Success = true;
-                    _serviceResponse.Message = CustomMessage.Updated;
                 }
+                else
+                {
+                    dtoData.FilePath = ObjSlideShowImages.FilePath;
+                    dtoData.FileName = ObjSlideShowImages.FileName;
+                }
+                ObjSlideShowImages.ImageDescription = dtoData.ImageDescription;
+                ObjSlideShowImages.Heading = dtoData.Heading;
+                ObjSlideShowImages.FilePath = dtoData.FilePath;
+                ObjSlideShowImages.FileName = dtoData.FileName;
+                ObjSlideShowImages.SlideShowId = dtoData.SlideShowId;
+                ObjSlideShowImages.UpdateById = _LoggedIn_UserID;
+                ObjSlideShowImages.DateModified = DateTime.UtcNow;
+
+                _context.SlideShowImages.Update(ObjSlideShowImages);
+                await _context.SaveChangesAsync();
+
+                _serviceResponse.Success = true;
+                _serviceResponse.Message = CustomMessage.Updated;
+                
             }
             else
             {
@@ -178,8 +180,61 @@ namespace PizzaOrder.Repository
 
                               select new GetAllSlideShowDto
                               {
-                                  //Id = m.Id,
-                                  ImageDescription = m.ImageDescription,
+                                  Id = m.Id,
+                                  ImageId = p.Id,
+                                  ImageDescription = p.ImageDescription != null ? p.ImageDescription : String.Empty,
+                                  Heading = p.Heading != null ? p.Heading : String.Empty,
+                                  CompanyId = m.CompanyId,
+                                  FileName = p.FileName,
+                                  FilePath = p.FilePath,
+                                  FullPath = _configuration.GetSection("AppSettings:SiteUrl").Value + p.FilePath + '/' + p.FileName,
+
+                                  //objGetAllSlideShowDataDto = _context.SlideShowImages.Where(o => o.SlideShowId == m.Id).Select(p => new GetAllSlideShowDataDto
+                                  //{
+                                  //    //IdImages = p.Id,
+                                  //    //HeaderSliderId = m.Id,
+                                  //    FileName = p.FileName,
+                                  //    FilePath = p.FilePath,
+                                  //    FullPath = _configuration.GetSection("AppSettings:SiteUrl").Value + p.FilePath + '/' + p.FileName,
+
+                                  //}).ToList()
+
+                                  CreatedById = m.CretedById,
+                                  DateCreated = m.DateCreated,
+                                  UpdatedById = m.UpdateById,
+                                  DateModified = m.DateModified,
+
+                              }).ToListAsync();
+
+            if (list.Count > 0)
+            {
+                _serviceResponse.Data = list;
+                _serviceResponse.Success = true;
+                _serviceResponse.Message = "Record Found";
+            }
+            else
+            {
+                _serviceResponse.Data = null;
+                _serviceResponse.Success = false;
+                _serviceResponse.Message = CustomMessage.RecordNotFound;
+            }
+            return _serviceResponse;
+
+        }
+        public async Task<ServiceResponse<object>> GetSliderDetailById(int ImageId)
+        {
+            var list = await (from m in _context.SlideShow
+                              join p in _context.SlideShowImages
+                              on m.Id equals p.SlideShowId
+                              where p.Id == ImageId
+
+
+                              select new GetAllSlideShowDto
+                              {
+                                  Id = m.Id,
+                                  ImageId = p.Id,
+                                  ImageDescription = p.ImageDescription!=null?p.ImageDescription:String.Empty,
+                                  Heading = p.Heading!=null?p.Heading:String.Empty,
                                   CompanyId = m.CompanyId,
                                   FileName = p.FileName,
                                   FilePath = p.FilePath,
@@ -248,7 +303,7 @@ namespace PizzaOrder.Repository
 
                 var featuredAd = new FeaturedAds
                 {
-                    CompanyId = dtoData.CompanyId,
+                    CompanyId =_LoggedIn_CompanyId,
                     StartDate = dtoData.StartDate,
                     EndDate = dtoData.EndDate,
                     CretedById = _LoggedIn_UserID,
@@ -368,6 +423,32 @@ namespace PizzaOrder.Repository
                 _serviceResponse.Data = Caldistance;
                 _serviceResponse.Success = true;
                 _serviceResponse.Message = "Record Found";
+            }
+            else
+            {
+                _serviceResponse.Data = null;
+                _serviceResponse.Success = false;
+                _serviceResponse.Message = CustomMessage.RecordNotFound;
+            }
+            return _serviceResponse;
+        }
+        public async Task<ServiceResponse<object>> DeleteSliderById(int id)
+        {
+            var objSlider = await _context.SlideShow.FirstOrDefaultAsync(x => x.Id.Equals(id));
+
+            if (objSlider != null)
+            {
+                var objsliderImage = await _context.SlideShowImages.Where(x => x.SlideShowId.Equals(id)).ToListAsync();
+                foreach(var itm in objsliderImage)
+                {
+                    _context.SlideShowImages.Remove(itm);
+                }
+                _context.SlideShow.Remove(objSlider);
+                await _context.SaveChangesAsync();
+
+
+                _serviceResponse.Success = true;
+                _serviceResponse.Message = CustomMessage.Deleted;
             }
             else
             {

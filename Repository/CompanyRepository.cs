@@ -28,7 +28,6 @@ namespace PizzaOrder.Repository
             _mapper = mapper;
             _HostEnvironment = HostEnvironment;
         }
-
         public async Task<ServiceResponse<object>> AddCompany(AddCompanyDto dtoData)
         {
             if (dtoData.ImageData != null)
@@ -70,6 +69,7 @@ namespace PizzaOrder.Repository
                 FileName = dtoData.FileName,
                 Longitude = dtoData.Longitude,
                 Latitude = dtoData.Latitude,
+                IsActive = dtoData.IsActive,
                 CretedById = _LoggedIn_UserID,
                 DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
             };
@@ -89,7 +89,6 @@ namespace PizzaOrder.Repository
 
             return _serviceResponse;
         }
-
         public async Task<ServiceResponse<object>> EditCompany(int id, EditCompanyDto dtoData)
         {
             var objitem = await _context.Company.FirstOrDefaultAsync(s => s.Id.Equals(id));
@@ -133,6 +132,7 @@ namespace PizzaOrder.Repository
                     objitem.FileName = dtoData.FileName;
                     objitem.Longitude = dtoData.Longitude;
                     objitem.Latitude = dtoData.Latitude;
+                    objitem.IsActive=dtoData.IsActive;
                     objitem.UpdateById = _LoggedIn_UserID;
                     objitem.DateModified = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow));
 
@@ -154,13 +154,12 @@ namespace PizzaOrder.Repository
 
             return _serviceResponse;
         }
-
         public async Task<ServiceResponse<object>> GetAllCompany()
         {
             try
             {
                 var list = await (from m in _context.Company
-
+                                  orderby m.Id descending
                                   select new GetAllCompanyDto
                                   {
                                       Id = m.Id,
@@ -180,6 +179,7 @@ namespace PizzaOrder.Repository
                                       DateCreated = m.DateCreated,
                                       UpdatedById = m.UpdateById,
                                       DateModified = m.DateModified,
+                                      IsActive = m.IsActive,
                                   }).ToListAsync();
 
                 if (list.Count() > 0)
@@ -203,7 +203,6 @@ namespace PizzaOrder.Repository
 
             return _serviceResponse;
         }
-
         public async Task<ServiceResponse<object>> GetCompanyById(int id)
         {
             var ObjItemDetail = await _context.Company.FirstOrDefaultAsync(x => x.Id == id);
@@ -229,6 +228,7 @@ namespace PizzaOrder.Repository
                     DateCreated = ObjItemDetail.DateCreated,
                     UpdatedById = ObjItemDetail.UpdateById,
                     DateModified = ObjItemDetail.DateModified,
+                    IsActive = ObjItemDetail.IsActive,
                 };
 
                 _serviceResponse.Data = data;
@@ -244,8 +244,6 @@ namespace PizzaOrder.Repository
 
             return _serviceResponse;
         }
-
-
         private double Distance(int Range, double lat1, double lon1, double lat2, double lon2)
         {
             double theta = lon1 - lon2;
@@ -254,65 +252,57 @@ namespace PizzaOrder.Repository
             dist = Helpers.HelperFunctions.rad2deg(dist);
             dist = (dist * 60 * 1.1515) / 0.6213711922;          //miles to kms
             return (dist);
-        }
-
-
-   
-
+        }   
         public async Task<ServiceResponse<object>> GetAllCompanyByLatLong(int Range, double Lat, double Long)
         {
+            List<GetAllCompanyDto> Caldistance = new List<GetAllCompanyDto>();
+            var query = (from c in _context.Company
+                            select c).ToList();
+            foreach (var place in query)
             {
-
-
-                List<GetAllCompanyDto> Caldistance = new List<GetAllCompanyDto>();
-                var query = (from c in _context.Company
-                             select c).ToList();
-                foreach (var place in query)
+                double distance = Distance(Range, Lat, Long, place.Latitude, place.Longitude);
+                if (distance < Range)
                 {
-                    double distance = Distance(Range, Lat, Long, place.Latitude, place.Longitude);
-                    if (distance < Range)
-                    {
-                        var data = new GetAllCompanyDto
-                                 {
-                                       Id = place.Id,
-                                      Name = place.Name,
-                                      Address = place.Address,
-                                      //ContactPerson = m.ContactPerson,
-                                      //CellNumber = m.CellNumber,
-                                      //SecondaryContactPerson = m.SecondaryContactPerson,
-                                      //SecondaryCellNumber = m.SecondaryCellNumber,
-                                      //UserTypeId = m.UserTypeId,
-                                      FileName = place.FileName,
-                                      FilePath = place.FilePath,
-                                      FullPath = _configuration.GetSection("AppSettings:SiteUrl").Value + place.FilePath + '/' + place.FileName,
-                                      Longitude = place.Longitude,
-                                      Latitude = place.Latitude,
-                                      //CreatedById = m.CretedById,
-                                      //DateCreated = m.DateCreated,
-                                      //UpdatedById = m.UpdateById,
-                                      //DateModified = m.DateModified,
-                            };
+                    var data = new GetAllCompanyDto
+                                {
+                                    Id = place.Id,
+                                    Name = place.Name,
+                                    Address = place.Address,
+                                    //ContactPerson = m.ContactPerson,
+                                    //CellNumber = m.CellNumber,
+                                    //SecondaryContactPerson = m.SecondaryContactPerson,
+                                    //SecondaryCellNumber = m.SecondaryCellNumber,
+                                    //UserTypeId = m.UserTypeId,
+                                    FileName = place.FileName,
+                                    FilePath = place.FilePath,
+                                    FullPath = _configuration.GetSection("AppSettings:SiteUrl").Value + place.FilePath + '/' + place.FileName,
+                                    Longitude = place.Longitude,
+                                    Latitude = place.Latitude,
+                                    //CreatedById = m.CretedById,
+                                    //DateCreated = m.DateCreated,
+                                    //UpdatedById = m.UpdateById,
+                                    //DateModified = m.DateModified,
+                        };
 
-                        Caldistance.Add(data);
-
-                    }
+                    Caldistance.Add(data);
 
                 }
 
-                if (Caldistance.Count() > 0)
-                {
-                    _serviceResponse.Data = Caldistance;
-                    _serviceResponse.Success = true;
-                    _serviceResponse.Message = "Record Found";
-                }
-                else
-                {
-                    _serviceResponse.Data = null;
-                    _serviceResponse.Success = false;
-                    _serviceResponse.Message = CustomMessage.RecordNotFound;
-                }
-                return _serviceResponse;
             }
+
+            if (Caldistance.Count() > 0)
+            {
+                _serviceResponse.Data = Caldistance;
+                _serviceResponse.Success = true;
+                _serviceResponse.Message = "Record Found";
+            }
+            else
+            {
+                _serviceResponse.Data = null;
+                _serviceResponse.Success = false;
+                _serviceResponse.Message = CustomMessage.RecordNotFound;
+            }
+            return _serviceResponse;
         }
         public async Task<ServiceResponse<object>> SearchCompany(string SearchField)
         {
@@ -339,6 +329,7 @@ namespace PizzaOrder.Repository
                                       DateCreated = m.DateCreated,
                                       UpdatedById = m.UpdateById,
                                       DateModified = m.DateModified,
+                                      IsActive = m.IsActive,
                                   }).ToListAsync();
 
                 if (list.Count() > 0)
@@ -357,6 +348,29 @@ namespace PizzaOrder.Repository
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
+            }
+
+
+            return _serviceResponse;
+        }
+        public async Task<ServiceResponse<object>> DeleteCompanyById(int id)
+        {
+            var objcompany = await _context.Company.FirstOrDefaultAsync(x => x.Id.Equals(id));
+
+            if (objcompany != null)
+            {
+                objcompany.IsActive = false;
+                _context.Company.Update(objcompany);
+                await _context.SaveChangesAsync();
+
+                _serviceResponse.Success = true;
+                _serviceResponse.Message = CustomMessage.Deleted;
+            }
+            else
+            {
+                _serviceResponse.Data = null;
+                _serviceResponse.Success = false;
+                _serviceResponse.Message = CustomMessage.RecordNotFound;
             }
 
 

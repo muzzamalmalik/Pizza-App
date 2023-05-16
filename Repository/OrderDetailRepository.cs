@@ -31,7 +31,6 @@ namespace PizzaOrder.Repository
             _mapper = mapper;
             _HostEnvironment = HostEnvironment;
         }
-
         public async Task<ServiceResponse<object>> AddOrderDetail(AddOrderDetailDto dtoData)
         {
             if (dtoData != null)
@@ -47,7 +46,7 @@ namespace PizzaOrder.Repository
                     //ToppingId = dtoData.ToppingId,
                     //CompanyId = dtoData.CompanyId,
                     Quantity = dtoData.Quantity,
-                    OrderType = dtoData.OrderType,
+                    //OrderType = dtoData.OrderType,
                     //Instructions = dtoData.Instructions,
                     CretedById = _LoggedIn_UserID,
                     DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
@@ -62,34 +61,9 @@ namespace PizzaOrder.Repository
 
             return _serviceResponse;
         }
-
-        public async Task<ServiceResponse<object>> AddToCartCall(AddToCartCallDto dtoData)
-
-
-
-        //var objpreorder = await _context.Orders.FirstOrDefaultAsync(x => x.UserId.Equals(_LoggedIn_UserID) && x.OrderStatus == (int)Helpers.Enums.OrderStatus.PreOrder);
-
-        //var HelpKey = 0;
-
-        //if (dtoData.OrderId == 0)
-        //{
-        //    var OrderToCreate = new Order
-        //    {
-        //        OrderStatus = (int)Helpers.Enums.OrderStatus.PreOrder,
-        //        UserId = _LoggedIn_UserID,
-        //        CompanyId = dtoData.CompanyId,
-        //        CretedById = _LoggedIn_UserID,
-        //        DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
-        //    };
-
-        //    await _context.Orders.AddAsync(OrderToCreate);
-        //    await _context.SaveChangesAsync();
-
-        //    dtoData.OrderId = OrderToCreate.Id;
-        //}
+        public async Task<ServiceResponse<object>> AddToCartCall(AddToCartCallDto dtoData)        
         {
             var existingOrder = await _context.Orders.FirstOrDefaultAsync(x => x.UserId.Equals(_LoggedIn_UserID) && x.CompanyId == dtoData.CompanyId && x.OrderStatus == (int)Helpers.Enums.OrderStatus.PreOrder);
-
             if (existingOrder == null)
             {
                 var OrderToCreate = new Order
@@ -98,6 +72,7 @@ namespace PizzaOrder.Repository
                     UserId = _LoggedIn_UserID,
                     CompanyId = dtoData.CompanyId,
                     CretedById = _LoggedIn_UserID,
+                    OrderType=dtoData.OrderType,
                     DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
                 };
 
@@ -118,6 +93,7 @@ namespace PizzaOrder.Repository
                     UserId = _LoggedIn_UserID,
                     CompanyId = dtoData.CompanyId,
                     CretedById = _LoggedIn_UserID,
+                    OrderType= dtoData.OrderType,
                     DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
                 };
 
@@ -142,8 +118,8 @@ namespace PizzaOrder.Repository
                             ItemSizeId = item.ItemSizeId,
                             CrustId = item.CrustId,
                             Quantity = item.Quantity,
-                            OrderType = item.OrderType,
-                            SubTotal = item.SubTotal,
+                            //OrderType = item.OrderType,
+                            //SubTotal = item.SubTotal,
                             CretedById = _LoggedIn_UserID,
                             DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
 
@@ -180,8 +156,8 @@ namespace PizzaOrder.Repository
                                 //ItemSizeId = item.ItemSizeId,
                                 //CrustId = item.CrustId,
                                 Quantity = item.Quantity,
-                                OrderType = dealItem.OrderType,
-                                SubTotal = item.SubTotal,
+                               // OrderType = dealItem.OrderType,
+                                //SubTotal = item.SubTotal,
                                 BillGroup = _context.OrderDetail.Where(x => x.OrderId == dtoData.OrderId).Count() > 0 ?
                                 _context.OrderDetail.Where(x => x.OrderId == dtoData.OrderId && x.DealId == dealItem.DealId).Count() > 0 && i == 0 ?
                                  _context.OrderDetail.Where(x => x.OrderId == dtoData.OrderId && x.DealId == dealItem.DealId).Max(x => x.BillGroup) + 1 : i == 0 ? 1 : i : 1,
@@ -205,44 +181,90 @@ namespace PizzaOrder.Repository
 
             return _serviceResponse;
         }
-
         public async Task<ServiceResponse<object>> EditOrderDetail(int id, OrderDetailDto dtoData)
         {
-            var objorderdetail = await _context.OrderDetail.FirstOrDefaultAsync(s => s.Id.Equals(id));
-            if (objorderdetail != null)
+            if(id>0)
             {
-                objorderdetail.OrderId = dtoData.OrderId;
-                objorderdetail.DealId = dtoData.DealId;
-                //objorderdetail.CategoryId = dtoData.CategoryId;
-                objorderdetail.ItemId = dtoData.ItemId;
-                objorderdetail.ItemSizeId = dtoData.ItemSizeId;
-                objorderdetail.CrustId = dtoData.CrustId;
-                //objorderdetail.ToppingId = dtoData.ToppingId;
-                //objorderdetail.CompanyId = dtoData.CompanyId;
-                objorderdetail.Quantity = dtoData.Quantity;
-                objorderdetail.OrderType = dtoData.OrderType;
-                //objorderdetail.Instructions= dtoData.Instructions;
-                objorderdetail.SubTotal = dtoData.SubTotal;
-                objorderdetail.UpdateById = _LoggedIn_UserID;
-                objorderdetail.DateModified = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow));
+                var objorderdetail = await _context.OrderDetail.FirstOrDefaultAsync(s => s.Id.Equals(id));
+                if (objorderdetail != null)
+                {
 
-                _context.OrderDetail.Update(objorderdetail);
-                await _context.SaveChangesAsync();
-                _serviceResponse.Success = true;
-                _serviceResponse.Message = CustomMessage.Updated;
+                    //objorderdetail.OrderId = dtoData.OrderId;
+                    objorderdetail.DealId = dtoData.IsDeal == true?dtoData.DealId:null;
+                    objorderdetail.ItemId = dtoData.ItemId;
+                    objorderdetail.ItemSizeId = dtoData.IsDeal == true ?null: dtoData.ItemSizeId==0?null: dtoData.ItemSizeId;
+                    objorderdetail.CrustId = dtoData.IsDeal == true ? null : dtoData.CrustId==0?null: dtoData.CrustId;
+                    objorderdetail.Quantity = dtoData.Quantity;
+                    objorderdetail.UpdateById = _LoggedIn_UserID;
+                    objorderdetail.DateModified = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow));
+
+                    _context.OrderDetail.Update(objorderdetail);
+                    await _context.SaveChangesAsync();
+                    _serviceResponse.Success = true;
+                    _serviceResponse.Message = CustomMessage.Updated;
+                                        
+                }
+                else
+                {
+                    _serviceResponse.Success = false;
+                    _serviceResponse.Message = CustomMessage.RecordNotFound;
+                }
             }
             else
             {
-                _serviceResponse.Success = false;
-                _serviceResponse.Message = CustomMessage.RecordNotFound;
+                if(dtoData.IsDeal==true)
+                {
+                    if(dtoData.objDeals!=null)
+                    {
+                        int i = 0;
+
+                        foreach (var dealItem in dtoData.objDeals)
+                        {
+                            var objOrderDetail = new OrderDetail
+                            {
+                                OrderId = dtoData.OrderId,
+                                DealId = dealItem.DealId,
+                                ItemId = dealItem.ItemId,
+                                Quantity = dtoData.Quantity,
+                                BillGroup = _context.OrderDetail.Where(x => x.OrderId == dtoData.OrderId).Count() > 0 ?
+                                _context.OrderDetail.Where(x => x.OrderId == dtoData.OrderId && x.DealId == dealItem.DealId).Count() > 0 && i == 0 ?
+                                 _context.OrderDetail.Where(x => x.OrderId == dtoData.OrderId && x.DealId == dealItem.DealId).Max(x => x.BillGroup) + 1 : i == 0 ? 1 : i : 1,
+                                CretedById = _LoggedIn_UserID,
+                                DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
+
+                            };
+                            i = objOrderDetail.BillGroup;
+                            await _context.OrderDetail.AddAsync(objOrderDetail);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                }
+                else
+                {
+                    var objOrderDetail = new OrderDetail
+                    {
+                        OrderId = dtoData.OrderId,
+                        DealId = dtoData.DealId,
+                        ItemId = dtoData.ItemId,
+                        ItemSizeId = dtoData.ItemSizeId,
+                        CrustId = dtoData.CrustId,
+                        Quantity = dtoData.Quantity,
+                        CretedById = _LoggedIn_UserID,
+                        DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),                     
+                        BillGroup = 0,                        
+
+                    };
+                    await _context.OrderDetail.AddAsync(objOrderDetail);
+                    await _context.SaveChangesAsync();
+                }
             }
+           
             return _serviceResponse;
         }
-
         public async Task<ServiceResponse<object>> GetAllOrderDetail()
         {
             var list = await (from m in _context.OrderDetail
-
+                              where _LoggedIn_UserTypeId==1?true:m.CretedById==_LoggedIn_UserID
                               select new GetAllOrderDetailDto
                               {
                                   Id = m.Id,
@@ -257,7 +279,7 @@ namespace PizzaOrder.Repository
                                   ItemName = m.ObjItem.Name,
                                   ItemSizeId = m.ItemSizeId,
                                   ItemSizeName = m.ObjItemSize.SizeDescription,
-                                  ItemSizePrice = m.ObjItemSize.Price,
+                                  ItemSizePrice = m.ObjItemSize.Price>0? m.ObjItemSize.Price:m.ObjItem.Price,
                                   CrustId = m.CrustId,
                                   CrustName = m.ObjCrust.Name,
                                   CrustPrice = m.ObjCrust.Price,
@@ -276,9 +298,9 @@ namespace PizzaOrder.Repository
 
                                   Quantity = m.Quantity,
                                   //CompanyId = m.CompanyId,
-                                  OrderType = ((Helpers.Enums.OrderType)m.OrderType).ToString(),
+                                 // OrderType = ((Helpers.Enums.OrderType)m.OrderType).ToString(),
                                   //Instructions = m.Instructions,
-                                  SubTotal = m.SubTotal,
+                                  //SubTotal = m.SubTotal,
                                   CreatedById = m.CretedById,
                                   DateCreated = m.DateCreated,
                                   UpdatedById = m.UpdateById,
@@ -299,7 +321,6 @@ namespace PizzaOrder.Repository
             }
             return _serviceResponse;
         }
-
         public async Task<ServiceResponse<object>> GetOrderDetailById(int id)
         {
             var objorderdetail = await _context.OrderDetail.FirstOrDefaultAsync(x => x.Id.Equals(id));
@@ -318,9 +339,9 @@ namespace PizzaOrder.Repository
                     //ToppingId= objorderdetail.ToppingId,
                     Quantity = objorderdetail.Quantity,
                     //CompanyId = objorderdetail.CompanyId,
-                    OrderType = ((Helpers.Enums.OrderType)objorderdetail.OrderType).ToString(),
+                    //OrderType = ((Helpers.Enums.OrderType)objorderdetail.OrderType).ToString(),
                     //Instructions = objorderdetail.Instructions,
-                    SubTotal = objorderdetail.SubTotal,
+                    //SubTotal = objorderdetail.SubTotal,
                     CreatedById = objorderdetail.CretedById,
                     DateCreated = objorderdetail.DateCreated,
                     UpdatedById = objorderdetail.UpdateById,
@@ -340,11 +361,9 @@ namespace PizzaOrder.Repository
 
             return _serviceResponse;
         }
-
         public async Task<ServiceResponse<object>> DeleteOrderDetailById(string id)
         {
             var orderDetailIdlist = id.Split(',').Select(Int32.Parse).ToList();
-
             foreach (var i in orderDetailIdlist)
             {
                 var objorderdetail = await _context.OrderDetail.FirstOrDefaultAsync(x => x.Id.Equals(i));
@@ -382,6 +401,61 @@ namespace PizzaOrder.Repository
             _serviceResponse.Success = true;
             _serviceResponse.Message = CustomMessage.Deleted;
 
+            return _serviceResponse;
+        }
+        public async Task<ServiceResponse<object>> DeleteOrderDetailByOrderDetailId(int id, int? dealId)
+        {
+            List<OrderDetail> list=null;
+            var objorder = await _context.OrderDetail.FirstOrDefaultAsync(x => x.Id.Equals(id) && x.DealId.Equals(dealId));
+            list =  await _context.OrderDetail.Where(x =>
+                        dealId>0? (x.OrderId == objorder.OrderId&& x.DealId == dealId && x.BillGroup == objorder.BillGroup):(x.Id== id)).ToListAsync();
+
+            if(list!=null)
+            {
+                _context.OrderDetail.RemoveRange(list);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                _serviceResponse.Data = null;
+                _serviceResponse.Success = false;
+                _serviceResponse.Message = CustomMessage.RecordNotFound;
+
+            }
+            _serviceResponse.Success = true;
+            _serviceResponse.Message = CustomMessage.Deleted;
+
+            return _serviceResponse;
+        }
+        public async Task<ServiceResponse<object>> GetDealItemsListById(int id,int CategoryId=0)
+        {
+            var list = await (from odtl in _context.OrderDetail
+                                        where odtl.Id == id
+                                        select new GetDealsItemsListDto
+                                        {
+                                            objItemList = (from it in _context.Items
+                                                           where it.CategoryId== CategoryId
+                                                           select new GetAllDealsItemDto
+                                                           {
+                                                               ItemId = it.Id,
+                                                               ItemName = it.Name,
+                                                               CategoryId= it.CategoryId
+                                                           }).ToList(),
+                                            Quantity = odtl.Quantity,
+                                        }).ToListAsync();
+
+            if (list.Count > 0)
+            {
+                _serviceResponse.Data = list;
+                _serviceResponse.Success = true;
+                _serviceResponse.Message = "Record Found";
+            }
+            else
+            {
+                _serviceResponse.Data = null;
+                _serviceResponse.Success = false;
+                _serviceResponse.Message = CustomMessage.RecordNotFound;
+            }
             return _serviceResponse;
         }
 

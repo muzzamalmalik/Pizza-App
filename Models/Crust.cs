@@ -16,13 +16,16 @@ namespace PizzaOrder.Models
         [StringLength(250, ErrorMessage = "Description cannot be longer then 250 characters")]
         public string Description { get; set; }
         public int Price { get; set; }
-        public int ItemId { get; set; }
+        public int? ItemId { get; set; }
         public int ItemSizeId { get; set; }
         public int CompanyId { get; set; }
+        public bool IsActive { get; set; }
 
 
         [ForeignKey("CompanyId")]
         public virtual Company ObjCompany { get; set; }
+        //[ForeignKey("ItemId")]
+        //public virtual Item ObjItem { get; set; }
 
     }
 }

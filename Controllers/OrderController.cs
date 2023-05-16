@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace PizzaOrder.Controllers
 {
+    [Authorize(Roles = AppRoles.Admin_User)]
     public class OrderController : BaseApiController
     {
         private readonly IOrderRepository _repo;
@@ -140,6 +141,50 @@ namespace PizzaOrder.Controllers
                 return BadRequest(ModelState);
             }
             _response = await _repo.GetOrderByCompany(CompanyId, orderStatus, page, pageSize);
+
+            return Ok(_response);
+        }
+        [HttpGet("GetOrderDetailById/{Id}")]
+        public async Task<IActionResult> GetOrderDetailByOrderId(int Id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.GetOrderDetailById(Id);
+
+            return Ok(_response);
+        }
+        [HttpGet("GetAllOrdersList")]
+        public async Task<IActionResult> GetAllOrdersList()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.GetAllOrdersList();
+
+            return Ok(_response);
+        } 
+        [HttpGet("GetAllOrdersDetail")]
+        public async Task<IActionResult> GetAllOrdersDetail()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.GetAllOrdersDetail();
+
+            return Ok(_response);
+        }
+        [HttpGet("GetCurrentDayOrdersDetail")]
+        public async Task<IActionResult> GetCurrentDayOrdersDetail()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.GetCurrentDayOrdersDetail();
 
             return Ok(_response);
         }

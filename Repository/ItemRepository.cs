@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using PizzaOrder.Context;
 using PizzaOrder.Dtos;
 using PizzaOrder.Helpers;
@@ -33,28 +35,8 @@ namespace PizzaOrder.Repository
         }
         public async Task<ServiceResponse<object>> AddItem(AddItemDto dtoData)
         {
-            //var objUser = await (from u in _context.Items
-            //                     where u.Name == dtoData.Name.Trim()
-            //                     && u.CategoryId == dtoData.CategoryId
-            //                     && u.CompanyId == dtoData.CompanyId
-
-            //                     select new
-            //                     {
-            //                         Name = u.Name,
-            //                         CategoryId = u.CategoryId,
-            //                         CompanyId = u.CompanyId,
-            //                         Description = u.Description,
-            //                     }).FirstOrDefaultAsync();
-
             if (dtoData != null)
             {
-                //if (objUser.Name.Length > 0 && dtoData.Name.Trim() == objUser.Name)
-                //{
-                //    _serviceResponse.Message = "Item with this Name ALready Exists";
-                //}
-                //_serviceResponse.Success = false;
-                //_serviceResponse.Data = objUser.Name;
-
                 if (dtoData.ImageData != null && dtoData.ImageData.Length > 0)
                 {
                     var pathToSave = Path.Combine(_HostEnvironment.WebRootPath, "ItemImages");
@@ -79,7 +61,7 @@ namespace PizzaOrder.Repository
                     {
                         Console.WriteLine(ex);
                     }
-
+                }
 
                     var ObjItem = new Item
                     {
@@ -89,30 +71,50 @@ namespace PizzaOrder.Repository
                         FileName = dtoData.FileName,
                         Sku = dtoData.Sku,
                         CategoryId = dtoData.CategoryId,
-                        CompanyId = dtoData.CompanyId,
+                        CompanyId = _LoggedIn_CompanyId,
                         ActiveQueue = dtoData.ActiveQueue,
+                        //ItemSizeId = dtoData.ItemSizeId,
+                        Price = dtoData.Price??0,
+                        IsActive= dtoData.IsActive,
                         CretedById = _LoggedIn_UserID,
                         DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
                     };
-
-                    try
-                    {
                         await _context.Items.AddAsync(ObjItem);
                         await _context.SaveChangesAsync();
-                        //_serviceResponse.Data = ObjItem;
+
                         _serviceResponse.Success = true;
                         _serviceResponse.Message = CustomMessage.Added;
-                    }
-                    catch (Exception ex)
+
+                    if (dtoData.ObjItemSizeStr != null)
                     {
-                        Console.WriteLine(ex);
+                        List<ItemSizeDto> ObjItemSize = JsonConvert.DeserializeObject<List<ItemSizeDto>>(dtoData.ObjItemSizeStr);
+                        foreach (var itm in ObjItemSize)
+                        {
+                          if(dtoData.Price==null|| dtoData.Price == 0)
+                          {
+                            var ItemSizeToCreate = new ItemSize
+                            {
+                                SizeDescription = itm.SizeDescription,
+                                Price = itm.Price!=null? itm.Price:0,
+                                ItemId = ObjItem.Id,
+                                IsActive = true,
+                                //CompanyId = Convert.ToInt32(_configuration.GetSection("AppSettings:CompanyId").Value),
+                                CompanyId = _LoggedIn_CompanyId,
+                                CretedById = _LoggedIn_UserID,
+                                DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
+                            };
+
+                            await _context.ItemSize.AddAsync(ItemSizeToCreate);
+                            await _context.SaveChangesAsync();
+                          }
+                           
+                        }
+
                     }
-                }
             }
 
             return _serviceResponse;
         }
-
         public async Task<ServiceResponse<object>> EditItem(int id, EditItemDto dtoData)
         {
             var objitem = await _context.Items.FirstOrDefaultAsync(s => s.Id.Equals(id));
@@ -149,7 +151,10 @@ namespace PizzaOrder.Repository
                 objitem.Sku = dtoData.Sku;
                 objitem.ActiveQueue = dtoData.ActiveQueue;
                 objitem.CategoryId = dtoData.CategoryId;
+                objitem.ItemSizeId = dtoData.ItemSizeId;
+                objitem.Price = dtoData.Price;
                 objitem.CompanyId = dtoData.CompanyId;
+                objitem.IsActive=dtoData.IsActive;
                 objitem.UpdateById = _LoggedIn_UserID;
                 objitem.DateModified = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow));
             }
@@ -161,7 +166,10 @@ namespace PizzaOrder.Repository
                 objitem.Sku = dtoData.Sku;
                 objitem.ActiveQueue = dtoData.ActiveQueue;
                 objitem.CategoryId = dtoData.CategoryId;
+                objitem.ItemSizeId = dtoData.ItemSizeId;
+                objitem.Price = dtoData.Price;
                 objitem.CompanyId = dtoData.CompanyId;
+                objitem.IsActive = dtoData.IsActive;
                 objitem.UpdateById = _LoggedIn_UserID;
                 objitem.DateModified = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow));
             }
@@ -170,14 +178,68 @@ namespace PizzaOrder.Repository
             _context.Items.Update(objitem);
             await _context.SaveChangesAsync();
 
+            if (dtoData.ObjItemSizeStr != null)
+            {
+                List<EditItemSizeDto> ObjItemSize = JsonConvert.DeserializeObject<List<EditItemSizeDto>>(dtoData.ObjItemSizeStr);
+                foreach (var itm in ObjItemSize)
+                {
+                    if (dtoData.Price == null || dtoData.Price == 0)
+                    {
+                        if(itm.Id>0)
+                        {
+                            var objitemsize = await _context.ItemSize.FirstOrDefaultAsync(x => x.Id.Equals(itm.Id));
+                            if (objitemsize != null)
+                            {
+                                objitemsize.SizeDescription = itm.SizeDescription;
+                                objitemsize.Price = itm.Price != null ? itm.Price : 0;
+                                objitemsize.ItemId = itm.ItemId;
+                                objitemsize.CompanyId = itm.CompanyId;
+                                objitemsize.IsActive = true;
+                                objitemsize.UpdateById = _LoggedIn_UserID;
+                                objitemsize.DateModified = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow));
+
+                                _context.ItemSize.Update(objitemsize);
+                                await _context.SaveChangesAsync();
+                                _serviceResponse.Success = true;
+                                _serviceResponse.Message = CustomMessage.Updated;
+                            }
+                            else
+                            {
+                                _serviceResponse.Success = false;
+                                _serviceResponse.Message = CustomMessage.RecordNotFound;
+                            }
+                        }
+                        else
+                        {
+                            var ItemSizeToCreate = new ItemSize
+                            {
+                                SizeDescription = itm.SizeDescription,
+                                Price = itm.Price != null ? itm.Price : 0,
+                                ItemId = objitem.Id,
+                                IsActive = true,
+                                //CompanyId = Convert.ToInt32(_configuration.GetSection("AppSettings:CompanyId").Value),
+                                CompanyId = _LoggedIn_CompanyId,
+                                CretedById = _LoggedIn_UserID,
+                                DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
+                            };
+
+                            await _context.ItemSize.AddAsync(ItemSizeToCreate);
+                            await _context.SaveChangesAsync();
+                        }
+                       
+                    }               
+                }
+
+            }
+
+
             // Set response message
             _serviceResponse.Success = true;
             _serviceResponse.Message = CustomMessage.Updated;
 
             return _serviceResponse;
         }
-
-        public async Task<ServiceResponse<object>> GetAllItem(int CompanyId, int Categoryid, int page, int pageSize)
+        public async Task<ServiceResponse<object>> GetAllItem(int Categoryid, int page, int pageSize)
         {
             var listCount = _context.Items.Where(x => x.CategoryId.Equals(Categoryid)).Select(p => p.Id).Count();
 
@@ -192,15 +254,15 @@ namespace PizzaOrder.Repository
                               let data = (from idtl in _context.ItemSize
                                           where idtl.ItemId == i.Id
                                           select idtl).FirstOrDefault()
-                              where Categoryid == i.CategoryId && CompanyId == i.CompanyId
-
+                              where Categoryid == i.CategoryId
+                              orderby i.Id descending
                               select new GetAllItemDto
                               {
                                   Id = i.Id,
-                                  //CompanyId = m.CompanyId,
+                                  CompanyId = i.CompanyId,
                                   ItemName = i.Name,
                                   ItemDescription = i.Description,
-                                  Price = data != null ? data.Price : 0,
+                                  Price = data.Price>0 ? data.Price :i.Price ,
                                   ItemSize = data != null ? data.SizeDescription : "",
                                   //CategoryId = m.CategoryId,
                                   //Sku = m.Sku,
@@ -208,6 +270,7 @@ namespace PizzaOrder.Repository
                                   FileName = i.FileName,
                                   FilePath = i.FilePath,
                                   FullPath = _configuration.GetSection("AppSettings:SiteUrl").Value + i.FilePath + '/' + i.FileName,
+                                  IsActive =i.IsActive,
                                   //CreatedById = m.CretedById,
                                   //DateCreated = m.DateCreated,
                                   //UpdatedById = m.UpdateById,
@@ -230,72 +293,79 @@ namespace PizzaOrder.Repository
             }
             return _serviceResponse;
         }
-
-        public async Task<ServiceResponse<object>> GetItemDetailsById(int id, int CompanyId)
+        public async Task<ServiceResponse<object>> GetItemDetailsById(int id)
         {
-            var ObjItemDetail = await _context.Items.Where(x => x.Id == id && x.CompanyId == CompanyId).FirstOrDefaultAsync();
-            if (ObjItemDetail != null)
+            var list =await (from itm in _context.Items
+                        where itm.Id== id
+            select new GetItemDetailsByIdDto
             {
-                var data = new GetItemDetailsByIdDto
-                {
-                    Id = ObjItemDetail.Id,
-                    ItemName = ObjItemDetail.Name,
-                    ItemDescription = ObjItemDetail.Description,
-                    CategoryId = ObjItemDetail.CategoryId,
-                    FullPath = _configuration.GetSection("AppSettings:SiteUrl").Value + ObjItemDetail.FilePath + '/' + ObjItemDetail.FileName,
+                Id = itm.Id,
+                Name = itm.Name,
+                Description = itm.Description,
+                CategoryId = itm.CategoryId,
+                CategoryName = itm.ObjCategory.Name,
+                IsActive=itm.IsActive,
+                CompanyId=itm.CompanyId,
+                Sku = itm.Sku,
+                FullPath = _configuration.GetSection("AppSettings:SiteUrl").Value + itm.FilePath + '/' + itm.FileName,
+                Price=itm.Price,
+                objGetAllItemSize = (from o in _context.ItemSize
+                                        where o.ItemId == itm.Id
 
-                    objGetAllItemSize = (from o in _context.ItemSize
-                                         where o.ItemId == ObjItemDetail.Id
-
-                                         select new GetAllItemSizeDto
-                                         {
-                                             Id = o.Id,
-                                             SizeDescription = o.SizeDescription,
-                                             Price = o.Price,
-                                             ItemId = o.ItemId,
-                                             CompanyId = o.CompanyId,
-                                             DateCreated = o.DateCreated,
-                                         }).ToList(),
-
-                    objGetAllCrust = (from p in _context.Crusts
-                                      where p.ItemId == ObjItemDetail.Id
-
-                                      select new GetAllCrustDto
-                                      {
-                                          Id = p.Id,
-                                          Name = p.Name,
-                                          Description = p.Description,
-                                          Price = p.Price,
-                                          //CategoryId = p.CategoryId,
-                                          ItemId = p.ItemId,
-                                          ItemSizeId = p.ItemSizeId,
-                                          CompanyId = p.CompanyId,
-                                          DateCreated = p.DateCreated,
-
-                                      }).ToList(),
-
-                    objGetAllTopping = (from q in _context.Toppings
-                                        where q.ItemId == ObjItemDetail.Id
-
-                                        select new GetAllToppingDto
+                                        select new GetAllItemSizeDto
                                         {
-                                            Id = q.Id,
-                                            Name = q.Name,
-                                            Price = q.Price,
-                                            //CategoryId = q.CategoryId,
-                                            ItemId = q.ItemId,
-                                            ItemSizeId = q.ItemSizeId,
-                                            CompanyId = q.CompanyId,
-                                            DateCreated = q.DateCreated,
+                                            Id = o.Id,
+                                            SizeDescription = o.SizeDescription,
+                                            Price = o.Price,
+                                            ItemId = o.ItemId,
+                                            CompanyId = o.CompanyId,
+                                            DateCreated = o.DateCreated,
                                         }).ToList(),
 
-                    CreatedById = ObjItemDetail.CretedById,
-                    DateCreated = ObjItemDetail.DateCreated,
-                    UpdatedById = ObjItemDetail.UpdateById,
-                    DateModified = ObjItemDetail.DateModified,
-                };
+                objGetAllCrust = (from p in _context.Crusts
+                                    where itm.CategoryId==40
 
-                _serviceResponse.Data = data;
+                                    select new GetAllCrustDto
+                                    {
+                                        Id = p.Id,
+                                        Name = p.Name,
+                                        Description = p.Description,
+                                        Price = p.Price,
+                                        //CategoryId = p.CategoryId,
+                                        //ItemId = p.ItemId,
+                                        ItemSizeId = p.ItemSizeId,
+                                        CompanyId = p.CompanyId,
+                                        DateCreated = p.DateCreated,
+
+                                    }).ToList(),
+
+                objGetAllTopping = (from q in _context.Toppings
+                                    //join itmsi in _context.ItemSize on q.ItemSizeId equals itmsi.Id
+                                    where itm.CategoryId==40
+
+                                    select new GetAllToppingDto
+                                    {
+                                        Id = q.Id,
+                                        Name = q.Name,
+                                        Price = q.Price,
+                                        //CategoryId = q.CategoryId,
+                                        ItemId = q.ItemId,
+                                        ItemSizeId = q.ItemSizeId,
+                                        CompanyId = q.CompanyId,
+                                        ItemSizeName = ((Helpers.Enums.ItemSize)q.ItemSizeId).ToString(),
+                                        DateCreated = q.DateCreated,
+                                    }).ToList(),
+
+                CreatedById = itm.CretedById,
+                DateCreated = itm.DateCreated,
+                UpdatedById = itm.UpdateById,
+                DateModified = itm.DateModified
+            }).ToListAsync();
+            if (list.Count > 0)
+            {
+
+
+                _serviceResponse.Data = list;
                 _serviceResponse.Success = true;
                 _serviceResponse.Message = "Record Found";
             }
@@ -304,12 +374,9 @@ namespace PizzaOrder.Repository
                 _serviceResponse.Data = null;
                 _serviceResponse.Success = false;
                 _serviceResponse.Message = CustomMessage.RecordNotFound;
-            }
-
+            }            
             return _serviceResponse;
         }
-
-
         public async Task<ServiceResponse<object>> GetAllItemByWord(GetItemsBySearchFields dtoData)
         {
 
@@ -319,17 +386,6 @@ namespace PizzaOrder.Repository
             }
 
             var categoryList = dtoData.CategoryId.Split(',').Select(Int32.Parse).ToList();
-
-
-            //var query = from isize in _context.ItemSize
-            //            join i in _context.Items on isize.ItemId equals item.Id into itemsGroup
-            //            from i in itemsGroup
-            //            group isize by new { isize.ItemId, i.CategoryId } into itemsgroup
-
-
-            //having g.Count() > 1
-
-            //select new { Count = g.Count(), CategoryId = g.Key.CategoryId }
 
             var query = from isize in _context.ItemSize
                         join it in _context.Items
@@ -368,6 +424,7 @@ namespace PizzaOrder.Repository
                                   FileName = a.FileName,
                                   FilePath = a.FilePath,
                                   FullPath = _configuration.GetSection("AppSettings:SiteUrl").Value + a.FilePath + '/' + a.FileName,
+                                  IsActive = a.IsActive,
                                   //CreatedById = a.CretedById,
                                   //DateCreated = a.DateCreated,
                                   //UpdatedById = a.UpdateById,
@@ -429,11 +486,8 @@ namespace PizzaOrder.Repository
 
         //    return _serviceResponse;
         //}
-
         public async Task<ServiceResponse<object>> GetAllItems(int CompanyId)
         {
-
-
             var list = await (from i in _context.Items
                               join
                               ic in _context.ItemSize on
@@ -444,12 +498,13 @@ namespace PizzaOrder.Repository
                               select new GetAllItemDto
                               {
                                   Id = i.Id,
-                                  //CompanyId = m.CompanyId,
+                                  CompanyId = i.CompanyId,
                                   ItemName = i.Name,
                                   ItemDescription = i.Description,
                                   Price = ic.Price,
                                   ItemSize = ic.SizeDescription,
                                   CategoryId = i.CategoryId,
+                                  IsActive = i.IsActive,
                                   //Sku = m.Sku,
                                   //ActiveQueue = m.ActiveQueue,
                                   FileName = i.FileName,
@@ -475,12 +530,9 @@ namespace PizzaOrder.Repository
             }
             return _serviceResponse;
         }
-
-
-
-        public async Task<ServiceResponse<object>> GetItemById(int id, int CompanyId)
+        public async Task<ServiceResponse<object>> GetItemById(int id)
         {
-            var ObjItemDetail = await _context.Items.Where(x => x.Id == id && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+            var ObjItemDetail = await _context.Items.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (ObjItemDetail != null)
             {
                 var data = new GetItemByIdDto
@@ -489,6 +541,8 @@ namespace PizzaOrder.Repository
                     ItemName = ObjItemDetail.Name,
                     ItemDescription = ObjItemDetail.Description,
                     CategoryId = ObjItemDetail.CategoryId,
+                    IsActive = ObjItemDetail.IsActive,
+                    CompanyId=ObjItemDetail.CompanyId,
                     FullPath = _configuration.GetSection("AppSettings:SiteUrl").Value + ObjItemDetail.FilePath + '/' + ObjItemDetail.FileName,
 
 
@@ -512,7 +566,6 @@ namespace PizzaOrder.Repository
 
             return _serviceResponse;
         }
-
         private double Distance(int Range, double lat1, double lon1, double lat2, double lon2)
         {
             double theta = lon1 - lon2;
@@ -604,6 +657,94 @@ namespace PizzaOrder.Repository
             _serviceResponse.Data = Result;
             _serviceResponse.Success = false;
             _serviceResponse.Message = CustomMessage.RecordNotFound;
+            return _serviceResponse;
+        }
+        public async Task<ServiceResponse<object>> GetItemsByCategoryandPrice(ItemsByCategoryandPriceDto dto)
+        {
+            if(dto.Id.Count>0)
+            {                
+                var list = await (from cat in _context.Category
+                                  where dto.Id.Contains(0)?true:dto.Id.Contains(cat.Id)
+                                  select new GetAllCategoryDto
+                                  {
+                                      Id = cat.Id,
+                                      CategoryName = cat.Name,
+                                      CompanyId=cat.CompanyId,
+                                      objGetAllItem = (from itm in _context.Items
+                                                       let its = (from its in _context.ItemSize
+                                                                  where its.ItemId == itm.Id
+                                                                  select its.Price).FirstOrDefault()
+                                                       where dto.Id.Contains(0) ? true:itm.CategoryId==cat.Id
+                                                       &&(dto.MinPrice != 0 || dto.MaxPrice != 0 ? its > 0 ? (its >= dto.MinPrice && its <= dto.MaxPrice):
+                                                       (itm.Price >= dto.MinPrice && itm.Price <= dto.MaxPrice) : true)
+
+                                                       select new GetAllItemDto
+                                                       {
+                                                           Id = itm.Id,
+                                                           ItemName = itm.Name,
+                                                           ItemDescription = itm.Description,
+                                                           CategoryId = itm.CategoryId,
+                                                           CategoryName = itm.ObjCategory.Name,
+                                                           Price = its>0?its:itm.Price,
+                                                           Sku = itm.Sku,
+                                                           IsActive=itm.IsActive,
+                                                           FileName = itm.FileName,
+                                                           FilePath = itm.FilePath,
+                                                           FullPath = _configuration.GetSection("AppSettings:SiteUrl").Value + itm.FilePath + '/' + itm.FileName,
+
+                                                       }).ToList(),
+
+                                  }).ToListAsync();
+                //select new GetAllItemDto
+                //                  {
+                //                      Id=itm.Id,
+                //                      ItemName=itm.Name,
+                //                      ItemDescription=itm.Description,
+                //                      FullPath = _configuration.GetSection("AppSettings:SiteUrl").Value + itm.FilePath + '/' + itm.FileName,
+                //                      Price=its,
+                //                      CategoryId=itm.CategoryId,
+                //                      CategoryName=itm.ObjCategory.Name
+                                      
+                //                  }).ToListAsync();
+                if (list != null)
+                {
+                    _serviceResponse.Data = list;
+                    _serviceResponse.Success = true;
+                    _serviceResponse.Message = CustomMessage.RecordFound;
+                }
+                else
+                {
+                    _serviceResponse.Data = null;
+                    _serviceResponse.Success = false;
+                    _serviceResponse.Message = CustomMessage.RecordNotFound;
+                }
+            }
+            
+           
+
+            return _serviceResponse;
+        }
+        public async Task<ServiceResponse<object>> DeleteItemById(int id)
+        {
+            var objitem = await _context.Items.FirstOrDefaultAsync(x => x.Id.Equals(id));
+
+            if (objitem != null)
+            {
+                objitem.IsActive = false;
+                _context.Items.Update(objitem);
+                await _context.SaveChangesAsync();
+
+                _serviceResponse.Success = true;
+                _serviceResponse.Message = CustomMessage.Deleted;
+            }
+            else
+            {
+                _serviceResponse.Data = null;
+                _serviceResponse.Success = false;
+                _serviceResponse.Message = CustomMessage.RecordNotFound;
+            }
+
+
             return _serviceResponse;
         }
     }

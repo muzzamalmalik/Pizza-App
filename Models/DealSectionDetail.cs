@@ -11,6 +11,8 @@ namespace PizzaOrder.Models
         
         public int DealSectionId { get; set; }
         public int ItemId { get; set; }
+        public bool IsActive { get; set; }
+        public int? ItemSizeid { get; set; }
 
         [ForeignKey("DealSectionId")]
         public virtual DealSection ObjDealSection { get; set; }

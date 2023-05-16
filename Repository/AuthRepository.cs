@@ -10,11 +10,13 @@ using PizzaOrder.Helpers;
 using PizzaOrder.IRepository;
 using PizzaOrder.Models;
 using System;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography.Xml;
 using System.Threading.Tasks;
+using static PizzaOrder.Helpers.Enums;
 
 namespace PizzaOrder.Repository
 {
@@ -54,7 +56,8 @@ namespace PizzaOrder.Repository
                                  LastActive = DateTime.UtcNow,
                                  VerificationCode = 123456,
                                  CompanyId = c.CompanyId,
-
+                                 Role= ((Helpers.Enums.UserTypeId)c.UserTypeId).ToString(),
+                                 //Helpers.Enums.UserTypeId.Admin.ToString()
                              }).FirstOrDefaultAsync();
 
             //var userId = _context.Users.Where(x => x.FullName.ToLower() == model.FullName.ToLower());
@@ -207,7 +210,7 @@ namespace PizzaOrder.Repository
                     //CreatedDateTime = DateTime.UtcNow,
                     ContactNumber = model.ContactNumber,
                     Address = model.Address,
-                    CompanyId = Convert.ToInt32(_configuration.GetSection("AppSettings:CompanyId").Value),
+                    CompanyId = model.UserTypeId!=3?_LoggedIn_CompanyId:18,
                     //UserDesignation=model.UserDesignation,
                     //FileName = model.FileName,
                     //FilePath = model.FilePath,
@@ -483,10 +486,6 @@ namespace PizzaOrder.Repository
 
             return _serviceResponse;
         }
-
-
-
-
         public async Task<ServiceResponse<object>> GetAdminlogoAndBrandLogoData(int CompanyId)
         {
             //var Objuser = await _context.Users.FirstOrDefaultAsync(x => x.Id == _LoggedIn_UserID);
@@ -542,11 +541,6 @@ namespace PizzaOrder.Repository
 
             return _serviceResponse;
         }
-
-
-
-
-
         public async Task<bool> UserExists(string userName)
         {
             if (await _context.Users.AnyAsync(x => x.UserName.ToLower() == userName.ToLower() && x.UserTypeId == _LoggedIn_UserTypeId))

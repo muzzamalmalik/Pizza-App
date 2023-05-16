@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace PizzaOrder.Controllers
 {
+    [Authorize]
     public class BillPaymentsController : BaseApiController
     {
         private readonly IBillPaymentsRepository _repo;

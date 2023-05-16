@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using static PizzaOrder.Helpers.Enums;
 
 namespace PizzaOrder.Helpers
 {
@@ -10,6 +11,14 @@ namespace PizzaOrder.Helpers
             SuperUser = 2 ,
             User = 3,
             Rider = 4,
+        }
+        public enum ItemSize
+        {     
+            Small = 1,
+            Medium = 2 ,
+            Large = 3,
+            Extra_Large = 4,
+            Family = 5,
         }
         public enum PaymentType
         {
@@ -99,7 +108,8 @@ namespace PizzaOrder.Helpers
             UserId = 1,
             Name,           
             UserTypeId,
-            CompanyId
+            CompanyId,
+            Role
         }
 
         public enum EnquiryStatus
@@ -187,9 +197,15 @@ namespace PizzaOrder.Helpers
     }
     public static class AppRoles
     {
-        public const string All = "SuperAdmin, Admin, Manager, SalesExecutive";
-        public const string SuperAdmin_Admin = "SuperAdmin, Admin";
-        public const string Manager_SalesExecutive = "Manager, SalesExecutive";
+        //public const string All = "SuperAdmin, Admin, Manager, SalesExecutive";
+        public const string All = "Admin,SuperUser,User,Rider";
+
+        //public const UserTypeId All = UserTypeId.Admin;
+        //public const string SuperAdmin_Admin = "SuperAdmin, Admin";
+        public const string Admin_Only = "Admin";
+        public const string SuperUser_Admin = "Admin, SuperUser";
+        public const string Admin_User = "Admin, User";
+        public const string Admin_Rider = "Admin, Rider";
     }
 
     //public static class Distance

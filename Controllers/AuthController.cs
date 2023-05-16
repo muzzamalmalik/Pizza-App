@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +18,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace PizzaOrder.Controllers
 {
@@ -24,11 +27,12 @@ namespace PizzaOrder.Controllers
     {
         private readonly IAuthRepository _repo;
         private readonly IConfiguration _config;
-
-        public AuthController(IAuthRepository repo, IConfiguration config)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public AuthController(IAuthRepository repo, IConfiguration config, IHttpContextAccessor httpContextAccessor)
         {
             _config = config;
             _repo = repo;
+            _httpContextAccessor = httpContextAccessor;
 
         }
 
@@ -154,8 +158,8 @@ namespace PizzaOrder.Controllers
                 new Claim(Enums.ClaimType.UserId.ToString(), objUserLogin.Id.ToString()),
                 new Claim(Enums.ClaimType.Name.ToString(), objUserLogin.FullName.ToString()),
                 new Claim(Enums.ClaimType.UserTypeId.ToString(), objUserLogin.UserTypeId.ToString()),
-                new Claim(Enums.ClaimType.CompanyId.ToString(), objUserLogin.CompanyId.ToString())
-
+                new Claim(Enums.ClaimType.CompanyId.ToString(), objUserLogin.CompanyId.ToString()),
+                new Claim(ClaimTypes.Role, objUserLogin.Role)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
@@ -176,8 +180,8 @@ namespace PizzaOrder.Controllers
                 token = tokenHandler.WriteToken(token),
                 loggedInUserTypeId = claims.FirstOrDefault(x => x.Type.Equals(Enums.ClaimType.UserTypeId.ToString())).Value,
                 CompanyId = claims.FirstOrDefault(x => x.Type.Equals(Enums.ClaimType.CompanyId.ToString())).Value,
+                Role = claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role.ToString())).Value,
             };
-
             _response.Success = true;
             _response.Message = "Successfully loged in";
             return Ok(_response);

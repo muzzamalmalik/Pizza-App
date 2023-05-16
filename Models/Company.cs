@@ -34,6 +34,7 @@ namespace PizzaOrder.Models
         public string FileName { get; set; }
         public string FilePath { get; set; }
         public int UserTypeId { get; set; }
+        public bool IsActive { get; set; }
 
     }
 }

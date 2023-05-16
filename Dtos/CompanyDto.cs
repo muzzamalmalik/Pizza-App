@@ -21,6 +21,8 @@ namespace PizzaOrder.Dtos
         public IFormFile ImageData { get; set; }
         public double Longitude { get; set; }
         public double Latitude { get; set; }
+        public bool IsActive { get; set; }
+
     }
 
     public class EditCompanyDto
@@ -37,6 +39,8 @@ namespace PizzaOrder.Dtos
         public IFormFile ImageData { get; set; }
         public double Longitude { get; set; }
         public double Latitude { get; set; }
+        public bool IsActive { get; set; }
+
     }
 
     public class GetAllCompanyDto
@@ -57,6 +61,7 @@ namespace PizzaOrder.Dtos
         public double Latitude { get; set; }
         public int CreatedById { get; set; }
         public int? UpdatedById { get; set; }
+        public bool IsActive { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
     }
@@ -76,6 +81,7 @@ namespace PizzaOrder.Dtos
         public string FullPath { get; set; }
         public double Longitude { get; set; }
         public double Latitude { get; set; }
+        public bool IsActive { get; set; }
     public int CreatedById { get; set; }
     public int? UpdatedById { get; set; }
     public DateTime DateCreated { get; set; }

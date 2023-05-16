@@ -30,12 +30,14 @@ namespace PizzaOrder.Context
         public virtual DbSet<SlideShow> SlideShow { get; set; }
         public virtual DbSet<SlideShowImages> SlideShowImages { get; set; }
         public virtual DbSet<Crust> Crusts { get; set; }
+        public virtual DbSet<ContactUs> ContactUs { get; set; }
         public virtual DbSet<BillPayments> BillPayments { get; set; }
         public virtual DbSet<OrderDetailAdditionalDetails> OrderDetailAdditionalDetails { get; set; }
         public virtual DbSet<OrderTransaction> OrderTransaction { get; set; }
         public virtual DbSet<OrderStatusTransaction> OrderStatusTransaction { get; set; }
         public virtual DbSet<UserDeliveryAddress> UserDeliveryAddress { get; set; }
         public virtual DbSet<FeaturedAds> FeaturedAds { get; set; }
+        public virtual DbSet<ItemSizeTransection> ItemSizeTransection { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -68,12 +70,21 @@ namespace PizzaOrder.Context
             modelBuilder.Entity<Item>()
                            .HasIndex(u => new { u.CompanyId, u.Name })
                            .IsUnique(true);
-            //modelBuilder.Entity<Topping>()
-            //               .HasIndex(u => new { u.Name })
-            //               .IsUnique(true);
-            //modelBuilder.Entity<Crust>()
-            //               .HasIndex(u => new { u.Name })
-            //               .IsUnique(true);
+            modelBuilder.Entity<ItemSize>()
+                          .HasIndex(u => new { u.SizeDescription, u.ItemId })
+                          .IsUnique(true);
+            modelBuilder.Entity<DealSectionDetail>()
+                          .HasIndex(u => new { u.DealSectionId, u.ItemId })
+                          .IsUnique(true);
+            modelBuilder.Entity<Category>()
+                          .HasIndex(u => new { u.Name, u.CompanyId })
+                          .IsUnique(true);
+            modelBuilder.Entity<Topping>()
+                           .HasIndex(u => new { u.Name,u.CompanyId, u.ItemSizeId})
+                           .IsUnique(true);
+            modelBuilder.Entity<Crust>()
+                           .HasIndex(u => new { u.Name,u.CompanyId,u.ItemSizeId })
+                           .IsUnique(true);
 
             // unique keys
 

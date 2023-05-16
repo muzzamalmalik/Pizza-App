@@ -42,6 +42,7 @@ namespace PizzaOrder.Repository
                     Description = dtoData.Description,
                     CategoryId = dtoData.CategoryId,
                     ChooseQuantity = dtoData.ChooseQuantity,
+                    IsActive=dtoData.IsActive,
                     CretedById = _LoggedIn_UserID,
                     DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
                 };
@@ -55,7 +56,6 @@ namespace PizzaOrder.Repository
 
             return _serviceResponse;
         }
-
         public async Task<ServiceResponse<object>> EditDealSection(int id, EditDealSectionDto dtoData)
         {
             var objdealsection = await _context.DealSection.FirstOrDefaultAsync(s => s.Id.Equals(id));
@@ -66,6 +66,7 @@ namespace PizzaOrder.Repository
                 objdealsection.Description = dtoData.Description;
                 objdealsection.CategoryId = dtoData.CategoryId;
                 objdealsection.ChooseQuantity = dtoData.ChooseQuantity;
+                objdealsection.IsActive=dtoData.IsActive;
                 objdealsection.UpdateById = _LoggedIn_UserID;
                 objdealsection.DateModified = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow));
 
@@ -118,5 +119,27 @@ namespace PizzaOrder.Repository
         //    }
         //    return _serviceResponse;
         //}
+        public async Task<ServiceResponse<object>> DeleteDealSectionById(int id)
+        {
+            var objdealsection = await _context.DealSection.FirstOrDefaultAsync(x => x.Id.Equals(id));
+
+            if (objdealsection != null)
+            {
+                objdealsection.IsActive = false;
+                _context.DealSection.Update(objdealsection);
+                await _context.SaveChangesAsync();
+
+                _serviceResponse.Success = true;
+                _serviceResponse.Message = CustomMessage.Deleted;
+            }
+            else
+            {
+                _serviceResponse.Data = null;
+                _serviceResponse.Success = false;
+                _serviceResponse.Message = CustomMessage.RecordNotFound;
+            }
+            return _serviceResponse;
+        }
+
     }
 }

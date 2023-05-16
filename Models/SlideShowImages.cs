@@ -9,6 +9,9 @@ namespace PizzaOrder.Models
     {
         
         public int SlideShowId { get; set; }
+        public string ImageDescription { get; set; }
+        public string Heading { get; set; }
+
         public string FileName { get; set; }
         public string FilePath { get; set; }
 

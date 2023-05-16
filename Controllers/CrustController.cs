@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace PizzaOrder.Controllers
 {
+    [Authorize(Roles = AppRoles.Admin_Only)]
     public class CrustController : BaseApiController
     {
         private readonly ICrustRepository _repo;
@@ -49,15 +50,15 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
-
-        [HttpGet("GetAllCrust/{CompanyId}")]
-        public async Task<IActionResult> GetAllCrust(int CompanyId)
+        [AllowAnonymous]
+        [HttpGet("GetAllCrust")]
+        public async Task<IActionResult> GetAllCrust()
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            _response = await _repo.GetAllCrust(CompanyId);
+            _response = await _repo.GetAllCrust();
 
             return Ok(_response);
         }
@@ -86,18 +87,19 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
-
-        [HttpGet("GetAllNewCrust/{CompanyId}")]
-        public async Task<IActionResult> GetAllNewCrust(int CompanyId)
+        [AllowAnonymous]
+        [HttpGet("GetAllNewCrust")]
+        public async Task<IActionResult> GetAllNewCrust()
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            _response = await _repo.GetAllNewCrust(CompanyId);
+            _response = await _repo.GetAllNewCrust();
 
             return Ok(_response);
         }
+        [AllowAnonymous]
         [HttpGet("GetAllCrustbyId/{Id}")]
         public async Task<IActionResult> GetAllCrustbyId(int Id)
         {
@@ -106,6 +108,17 @@ namespace PizzaOrder.Controllers
                 return BadRequest(ModelState);
             }
             _response = await _repo.GetAllCrustbyId(Id);
+
+            return Ok(_response);
+        }
+        [HttpDelete("DeleteCrustById/{id}")]
+        public async Task<IActionResult> DeleteCrustById(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.DeleteCrustById(id);
 
             return Ok(_response);
         }

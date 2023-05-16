@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace PizzaOrder.Dtos
 {
@@ -12,6 +13,8 @@ namespace PizzaOrder.Dtos
         public int BillId { get; set; }
         public int OrderId { get; set; }
         public int PaymentMode { get; set; }
+
+        [DisplayFormat(DataFormatString ="d/M/yyyy")]
         public DateTime? PaymentDate { get; set; }
         public string TransactionReference { get; set; }
         public string FileName { get; set; }

@@ -13,6 +13,7 @@
         public const string Credentialsok = "Required fields are filled";
         public const string SqlDuplicateRecord = "Same record already exist in database";
         public const string RecordNotFound = "Record not found";
+        public const string RecordFound = "Record Found";
         public const string CheckInFailed = "Not Allowed To CheckIn OutSide of the Paremeter";
         public const string Invalid = "Invalid Credentials";
         public const string RecordRelationExist = "This {0} record has dependent record. Please remove all dependent details first";

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace PizzaOrder.Controllers
 {
+    [Authorize(Roles = AppRoles.Admin_Only)]
     public class ToppingController : BaseApiController
     {
         private readonly IToppingRepository _repo;
@@ -48,15 +49,15 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
-
-        [HttpGet("GetAllTopping/{CompanyId}")]
-        public async Task<IActionResult> GetAllTopping(int CompanyId)
+        [AllowAnonymous]
+        [HttpGet("GetAllTopping")]
+        public async Task<IActionResult> GetAllTopping()
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            _response = await _repo.GetAllTopping(CompanyId);
+            _response = await _repo.GetAllTopping();
 
             return Ok(_response);
         }
@@ -85,18 +86,19 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
-
-        [HttpGet("GetAllNewTopping/{ComapnyId}")]
-        public async Task<IActionResult> GetAllNewTopping(int ComapnyId)
+        [AllowAnonymous]
+        [HttpGet("GetAllNewTopping")]
+        public async Task<IActionResult> GetAllNewTopping()
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            _response = await _repo.GetAllNewTopping(ComapnyId);
+            _response = await _repo.GetAllNewTopping();
 
             return Ok(_response);
         }
+        [AllowAnonymous]
         [HttpGet("GetAllToppingById/{Id}")]
         public async Task<IActionResult> GetAllToppingById(int Id)
         {
@@ -108,6 +110,17 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
+        [HttpDelete("DeleteToppingById/{id}")]
+        public async Task<IActionResult> DeleteToppingById(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.DeleteToppingById(id);
+
+            return Ok(_response);
+        } 
     }
 
 }

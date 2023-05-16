@@ -1,4 +1,5 @@
 ﻿using AutoMapper.Configuration.Conventions;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 
@@ -7,7 +8,6 @@ namespace PizzaOrder.Dtos
     public class DealSectionDto
     {
     }
-
     public class AddDealSectionDto
     {
         public int DealId { get; set; }
@@ -15,15 +15,20 @@ namespace PizzaOrder.Dtos
         public string Description { get; set; }
         public int CategoryId { get; set; }
         public int ChooseQuantity { get; set; }
+        public bool IsActive { get; set; }
     }
 
     public class EditDealSectionDto
     {
+        public int Id { get; set; }
         public int DealId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public int CategoryId { get; set; }
         public int ChooseQuantity { get; set; }
+        public int Mode { get; set; }
+        public bool IsActive { get; set; }
+
     }
 
     public class GetAllDealSectionDto
@@ -34,6 +39,7 @@ namespace PizzaOrder.Dtos
         public string Description { get; set; }
         public int CategoryId { get; set; }
         public int ChooseQuantity { get; set; } = 1;
+        public bool IsActive { get; set; }
         public string CategoryName { get; set; }
         public int CreatedById { get; set; }
         public int? UpdatedById { get; set; }

@@ -12,14 +12,18 @@ namespace PizzaOrder.Dtos
     {
         public string Name { get; set; }
         public string Description { get; set; }
-
         public int Sku { get; set; }
+        public int? Price { get; set; }
         public string FileName { get; set; }
         public string FilePath { get; set; }
         public int CategoryId { get; set; }
         public bool ActiveQueue { get; set; }
+        public bool IsActive { get; set; }
         public int CompanyId { get; set; }
         public IFormFile ImageData { get; set; }
+        //public List<ItemSizeDto> ObjItemSize { get; set; }
+        public string ObjItemSizeStr { get; set; }
+
     }
     public class EditItemDto
     {
@@ -27,12 +31,17 @@ namespace PizzaOrder.Dtos
         public string Description { get; set; }
 
         public int Sku { get; set; }
+        public int ItemSizeId { get; set; }
+        public int Price { get; set; }
         public string FileName { get; set; }
         public string FilePath { get; set; }
         public int CategoryId { get; set; }
         public bool ActiveQueue { get; set; }
         public int CompanyId { get; set; }
+        public bool IsActive { get; set; }
         public IFormFile ImageData { get; set; }
+        public string ObjItemSizeStr { get; set; }
+
 
     }
     public class GetAllItemDto
@@ -41,12 +50,14 @@ namespace PizzaOrder.Dtos
         public string ItemName { get; set; }
         public string ItemDescription { get; set; }
         public int Price { get; set; }
+        public int Sku { get; set; }
         public string ItemSize { get; set; }
         public int CompanyId { get; set; }
         public string CompanyName { get; set; }
         public string FileName { get; set; }
         public string FilePath { get; set; }
         public string FullPath { get; set; }
+        public bool IsActive { get; set; }
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
         //public bool ActiveQueue { get; set; }
@@ -71,11 +82,16 @@ namespace PizzaOrder.Dtos
     public class GetItemDetailsByIdDto
     {
         public int Id { get; set; }
-        public string ItemName { get; set; }
-        public string ItemDescription { get; set; }
+        public int Price { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
         public string FullPath { get; set; }
         public int CategoryId { get; set; }
-        public int CreatedById { get; set; }
+        public int CompanyId { get; set; }
+        public bool IsActive { get; set; }
+        public int CreatedById { get; set; }    
+        public int Sku { get; set; }
+        public string CategoryName { get; set; }
         public int? UpdatedById { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
@@ -91,8 +107,10 @@ namespace PizzaOrder.Dtos
         public string ItemDescription { get; set; }
         public string FullPath { get; set; }
         public int CategoryId { get; set; }
+        public int CompanyId { get; set; }
         public int CreatedById { get; set; }
         public int? UpdatedById { get; set; }
+        public bool IsActive { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
         //public List<GetAllItemSizeDto> objGetAllItemSize { get; set; }
@@ -110,5 +128,12 @@ namespace PizzaOrder.Dtos
         public double Long { get; set; }
         public int Range { get; set; }
     
+    }
+    public class ItemsByCategoryandPriceDto
+    {
+        public List<int> Id { get; set; }
+        public int? MinPrice{ get; set; }
+        public int? MaxPrice { get; set; }
+
     }
 }

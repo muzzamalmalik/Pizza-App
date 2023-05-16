@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PizzaOrder.Dtos
 {
@@ -15,6 +16,8 @@ namespace PizzaOrder.Dtos
         public int ItemId { get; set; }
         public int ItemSizeId { get; set; }
         public int CompanyId { get; set; }
+        public bool IsActive { get; set; }
+       
     }
 
     public class EditCrustDto
@@ -26,6 +29,8 @@ namespace PizzaOrder.Dtos
         public int ItemId { get; set; }
         public int ItemSizeId { get; set; }
         public int CompanyId { get; set; }
+        public bool IsActive { get; set; }
+       
     }
 
     public class GetAllCrustDto
@@ -40,6 +45,7 @@ namespace PizzaOrder.Dtos
         public int CompanyId { get; set; }
         public int CreatedById { get; set; }
         public int? UpdatedById { get; set; }
+        public bool IsActive { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
     }
@@ -48,9 +54,10 @@ namespace PizzaOrder.Dtos
         public string Name { get; set; }
         //public string Description { get; set; }
         public int Price { get; set; }
+        public bool IsActive { get; set; }
         //public int CategoryId { get; set; }
-        // public int ItemId { get; set; }
-        // public int ItemSizeId { get; set; }
+        public List<int> ItemId { get; set; }
+        public int ItemSizeId { get; set; }
         public int CompanyId { get; set; }
     }
 
@@ -59,9 +66,10 @@ namespace PizzaOrder.Dtos
         public string Name { get; set; }
         // public string Description { get; set; }
         public int Price { get; set; }
+        public bool IsActive { get; set; }
         // public int CategoryId { get; set; }
-        //public int ItemId { get; set; }
-        //public int ItemSizeId { get; set; }
+        public int ItemId { get; set; }
+        public int ItemSizeId { get; set; }
         public int CompanyId { get; set; }
     }
 
@@ -69,12 +77,15 @@ namespace PizzaOrder.Dtos
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string ItemName { get; set; }
+        public string ItemSizeName { get; set; }
         // public string Description { get; set; }
         public int Price { get; set; }
         //public int CategoryId { get; set; }
-        //public int ItemId { get; set; }
-        //public int ItemSizeId { get; set; }
+        public int ItemId { get; set; }
+        public int ItemSizeId { get; set; }
         public int CompanyId { get; set; }
+        public bool IsActive { get; set; }
         public int CreatedById { get; set; }
         public int? UpdatedById { get; set; }
         public DateTime DateCreated { get; set; }

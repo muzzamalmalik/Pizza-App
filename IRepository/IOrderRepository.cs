@@ -18,5 +18,9 @@ namespace PizzaOrder.IRepository
         Task<ServiceResponse<object>> GetOrderForRider(int CompanyId);
         Task<ServiceResponse<object>> RiderStuatusUpdate(AddProcessOrderDto dtoData);
         Task<ServiceResponse<object>> GetOrderByCompany(int CompanyId, int orderStatus, int page, int pageSize);
+        Task<ServiceResponse<object>> GetOrderDetailById(int Id);
+        Task<ServiceResponse<object>> GetAllOrdersList();
+        Task<ServiceResponse<object>> GetAllOrdersDetail();
+        Task<ServiceResponse<object>> GetCurrentDayOrdersDetail();
     }
 }

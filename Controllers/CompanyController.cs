@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using PizzaOrder.Dtos;
+using PizzaOrder.Helpers;
 using PizzaOrder.IRepository;
 using System.Threading.Tasks;
 
 namespace PizzaOrder.Controllers
 {
+    [Authorize(Roles = AppRoles.Admin_Only)]
     public class CompanyController : BaseApiController
     {
         private readonly ICompanyRepository _repo;
@@ -46,7 +48,7 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
-
+        [AllowAnonymous]
         [HttpGet("GetAllCompany")]
         public async Task<IActionResult> GetAllCompany()
         {
@@ -58,7 +60,7 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
-
+        [AllowAnonymous]
         [HttpGet("GetCompanyById/{id}")]
         public async Task<IActionResult> GetCompanyById(int id)
         {
@@ -70,6 +72,7 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
+        [AllowAnonymous]
         [HttpGet("GetAllCompanyByLatLong")]
         public async Task<IActionResult> GetAllCompanyByLatLong(int Range, double Lat, double Long)
         {
@@ -81,6 +84,7 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
+        [AllowAnonymous]
         [HttpGet("SearchCompany/{SearchField}")]
         public async Task<IActionResult> SearchCompany(string SearchField)
         {
@@ -89,6 +93,17 @@ namespace PizzaOrder.Controllers
                 return BadRequest(ModelState);
             }
             _response = await _repo.SearchCompany(SearchField);
+
+            return Ok(_response);
+        }
+        [HttpDelete("DeleteCompanyById/{id}")]
+        public async Task<IActionResult> DeleteCompanyById(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.DeleteCompanyById(id);
 
             return Ok(_response);
         }

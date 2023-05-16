@@ -12,6 +12,7 @@ namespace PizzaOrder.IRepository
         Task<ServiceResponse<object>> GetCompanyById(int id);
         Task<ServiceResponse<object>> GetAllCompanyByLatLong(int Range, double Lat, double Long);
         Task<ServiceResponse<object>> SearchCompany(string SearchField);
+        Task<ServiceResponse<object>> DeleteCompanyById(int id);
 
     }
 }

@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using static PizzaOrder.Helpers.Enums;
 
 namespace PizzaOrder.Repository
 {
@@ -34,7 +35,6 @@ namespace PizzaOrder.Repository
 
         public async Task<ServiceResponse<object>> AddTopping(AddToppingDto dtoData)
         {
-
             if (dtoData != null)
             {
                 var ToppingToCreate = new Topping
@@ -44,7 +44,8 @@ namespace PizzaOrder.Repository
                     //CategoryId = dtoData.CategoryId,
                     ItemId = dtoData.ItemId,
                     ItemSizeId = dtoData.ItemSizeId,
-                    CompanyId = dtoData.CompanyId,
+                    //CompanyId = dtoData.CompanyId,
+                    CompanyId = _LoggedIn_CompanyId,
                     CretedById = _LoggedIn_UserID,
                     DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
                 };
@@ -55,13 +56,8 @@ namespace PizzaOrder.Repository
                 _serviceResponse.Success = true;
                 _serviceResponse.Message = CustomMessage.Added;
             }
-        
-            
-                
-
             return _serviceResponse;
         }
-
         public async Task<ServiceResponse<object>> EditTopping(int id, EditToppingDto dtoData)
         {
             var objtopping = await _context.Toppings.FirstOrDefaultAsync(s => s.Id.Equals(id));
@@ -88,12 +84,11 @@ namespace PizzaOrder.Repository
             }
             return _serviceResponse;
         }
-
-        public async Task<ServiceResponse<object>> GetAllTopping(int CompanyId)
+        public async Task<ServiceResponse<object>> GetAllTopping()
         {
             var list = await (from m in _context.Toppings
-                              where m.CompanyId == CompanyId
-
+                             // where m.CompanyId == CompanyId
+                             orderby m.Id descending
                               select new GetAllToppingDto
                               {
                                   Id = m.Id,
@@ -129,20 +124,37 @@ namespace PizzaOrder.Repository
 
             if (dtoData != null)
             {
-                var ToppingToCreate = new Topping
-                {
-                    Name = dtoData.Name,
-                    Price = dtoData.Price,
-                    //CategoryId = dtoData.CategoryId,
-                    // ItemId = dtoData.ItemId,
-                    // ItemSizeId = dtoData.ItemSizeId,
-                    CompanyId = dtoData.CompanyId,
-                    CretedById = _LoggedIn_UserID,
-                    DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
-                };
+                
+                //if (dtoData.ItemId.Count > 0)
+                //{
+                //    foreach(var item in dtoData.ItemId)
+                //    {
+                        var ToppingToCreate = new Topping
+                        {
+                            Name = dtoData.Name,
+                            Price = dtoData.Price,
+                            IsActive = dtoData.IsActive,
+                            //ItemId = item,
+                            ItemSizeId = dtoData.ItemSizeId,
+                        //CategoryId = dtoData.CategoryId,
+                        // ItemId = dtoData.ItemId,
+                        // ItemSizeId = dtoData.ItemSizeId,
+                            CompanyId = _LoggedIn_CompanyId,
+                            CretedById = _LoggedIn_UserID,
+                            DateCreated = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow)),
+                        };
+                        
 
-                await _context.Toppings.AddAsync(ToppingToCreate);
-                await _context.SaveChangesAsync();
+                        await _context.Toppings.AddAsync(ToppingToCreate);
+                        await _context.SaveChangesAsync();
+                //    }
+                //}
+                //else
+                //{
+                //    await _context.Toppings.AddAsync(ToppingToCreate);
+                //    await _context.SaveChangesAsync();
+                //}
+                   
                 //_serviceResponse.Data = ToppingToCreate;
                 _serviceResponse.Success = true;
                 _serviceResponse.Message = CustomMessage.Added;
@@ -153,7 +165,6 @@ namespace PizzaOrder.Repository
 
             return _serviceResponse;
         }
-
         public async Task<ServiceResponse<object>> EditNewTopping(int id, EditNewToppingDto dtoData)
         {
             var objtopping = await _context.Toppings.FirstOrDefaultAsync(s => s.Id.Equals(id));
@@ -162,9 +173,10 @@ namespace PizzaOrder.Repository
                 objtopping.Name = dtoData.Name;
                 objtopping.Price = dtoData.Price;
                 //objtopping.CategoryId = dtoData.CategoryId;
-                //objtopping.ItemId = dtoData.ItemId;
-                //objtopping.ItemSizeId = dtoData.ItemSizeId;
-                objtopping.CompanyId = dtoData.CompanyId;
+                objtopping.ItemId = dtoData.ItemId;
+                objtopping.ItemSizeId = dtoData.ItemSizeId;
+                objtopping.CompanyId =_LoggedIn_CompanyId;
+                objtopping.IsActive = dtoData.IsActive;
                 objtopping.UpdateById = _LoggedIn_UserID;
                 objtopping.DateModified = Convert.ToDateTime(Helpers.HelperFunctions.ToDateTime(DateTime.UtcNow));
 
@@ -180,12 +192,11 @@ namespace PizzaOrder.Repository
             }
             return _serviceResponse;
         }
-
-        public async Task<ServiceResponse<object>> GetAllNewTopping(int CompanyId)
+        public async Task<ServiceResponse<object>> GetAllNewTopping()
         {
             var list = await (from m in _context.Toppings
-                              where m.CompanyId == CompanyId
-
+                                  // where m.CompanyId == CompanyId
+                              orderby m.Id descending
                               select new GetAllNewToppingDto
                               {
                                   Id = m.Id,
@@ -193,12 +204,15 @@ namespace PizzaOrder.Repository
                                   Name = m.Name,
                                   //CategoryId = m.CategoryId,
                                   Price = m.Price,
+                                  //ItemName = m.ObjItem.Name,
+                                  ItemSizeName = ((Helpers.Enums.ItemSize)m.ItemSizeId).ToString(),
                                   //ItemSizeId = m.ItemSizeId,
                                   // ItemId = m.ItemId,
                                   CreatedById = m.CretedById,
                                   DateCreated = m.DateCreated,
                                   UpdatedById = m.UpdateById,
                                   DateModified = m.DateModified,
+                                  IsActive = m.IsActive,
 
                               }).ToListAsync();
 
@@ -220,7 +234,6 @@ namespace PizzaOrder.Repository
         {
             var list = await (from m in _context.Toppings
                               where m.Id == Id
-
                               select new GetAllNewToppingDto
                               {
                                   Id = m.Id,
@@ -228,15 +241,14 @@ namespace PizzaOrder.Repository
                                   Name = m.Name,
                                   //CategoryId = m.CategoryId,
                                   Price = m.Price,
-                                  //ItemSizeId = m.ItemSizeId,
-                                  // ItemId = m.ItemId,
+                                  ItemSizeId = m.ItemSizeId,
+                                  ItemId = m.ItemId,
                                   CreatedById = m.CretedById,
                                   DateCreated = m.DateCreated,
                                   UpdatedById = m.UpdateById,
                                   DateModified = m.DateModified,
-
+                                  IsActive=m.IsActive
                               }).ToListAsync();
-
             if (list.Count > 0)
             {
                 _serviceResponse.Data = list;
@@ -249,6 +261,29 @@ namespace PizzaOrder.Repository
                 _serviceResponse.Success = false;
                 _serviceResponse.Message = CustomMessage.RecordNotFound;
             }
+            return _serviceResponse;
+        }
+        public async Task<ServiceResponse<object>> DeleteToppingById(int id)
+        {
+            var objtopping = await _context.Toppings.FirstOrDefaultAsync(x => x.Id.Equals(id));
+
+            if (objtopping != null)
+            {
+                objtopping.IsActive=false;
+                _context.Toppings.Update(objtopping);
+                await _context.SaveChangesAsync();
+
+                _serviceResponse.Success = true;
+                _serviceResponse.Message = CustomMessage.Deleted;
+            }
+            else
+            {
+                _serviceResponse.Data = null;
+                _serviceResponse.Success = false;
+                _serviceResponse.Message = CustomMessage.RecordNotFound;
+            }
+           
+
             return _serviceResponse;
         }
     }

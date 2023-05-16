@@ -10,5 +10,6 @@ namespace PizzaOrder.IRepository
         Task<ServiceResponse<object>> AddDealSectionDetail(AddDealSectionDetailDto dtoData);
         Task<ServiceResponse<object>> EditDealSectionDetail(int id, EditDealSectionDetailDto dtoData);
         //Task<ServiceResponse<object>> GetAllDealSectionDetail();
+        Task<ServiceResponse<object>> DeleteDealSectionDeatilById(int id);
     }
 }

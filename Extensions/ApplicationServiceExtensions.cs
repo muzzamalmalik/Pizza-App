@@ -28,6 +28,10 @@ namespace PizzaOrder.Extensions
             services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
             services.AddScoped<IBillPaymentsRepository, BillPaymentsRepository>();
             services.AddScoped<ICompanyRepository, CompanyRepository>();
+            services.AddScoped<IReportRepository, ReportRepository>();
+            services.AddScoped<ILookUpRepository, LookUpRepository>();
+            services.AddScoped<IContactUsRepository, ContactUsRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             
 
 

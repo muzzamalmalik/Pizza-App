@@ -11,5 +11,7 @@ namespace PizzaOrder.IRepository
         Task<ServiceResponse<object>> EditItemSize(int id, EditItemSizeDto dtoData);
         Task<ServiceResponse<object>> GetAllItemSize();
         Task<ServiceResponse<object>> GetItemSizeById(int id);
+        Task<ServiceResponse<object>> DeleteItemSizeById(int id);
+        Task<ServiceResponse<object>> GetAllItemSizes();
     }
 }

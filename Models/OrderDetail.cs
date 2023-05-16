@@ -15,9 +15,6 @@ namespace PizzaOrder.Models
         public int? ItemSizeId { get; set; }
         public int? CrustId { get; set; }
         public int Quantity { get; set; }
-        public int OrderType { get; set; }
-        public int SubTotal { get; set; }
-        public int? DeliveryCharges { get; set; }
         public int BillGroup { get; set; }
 
         [ForeignKey("OrderId")]
@@ -34,6 +31,8 @@ namespace PizzaOrder.Models
 
         [ForeignKey("CrustId")]
         public virtual Crust ObjCrust { get; set; }
+        [ForeignKey("CretedById")]
+        public virtual User ObjUser { get; set; }
 
     }
 }

@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using PizzaOrder.Dtos;
+using PizzaOrder.Helpers;
 using PizzaOrder.IRepository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PizzaOrder.Controllers
 {
+    [Authorize(Roles = AppRoles.Admin_User)]
     public class OrderDetailController : BaseApiController
     {
         private readonly IOrderDetailRepository _repo;
@@ -92,6 +94,28 @@ namespace PizzaOrder.Controllers
                 return BadRequest(ModelState);
             }
             _response = await _repo.DeleteOrderDetailById(id);
+
+            return Ok(_response);
+        }
+        [HttpDelete("DeleteOrderDetailByOrderDetailId/{id}/{dealId}")]
+        public async Task<IActionResult> DeleteOrderDetailByOrderDetailId(int id, int? dealId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.DeleteOrderDetailByOrderDetailId(id, dealId);
+
+            return Ok(_response);
+        }
+        [HttpGet("GetDealItemsListById/{id}/{CategoryId}")]
+        public async Task<IActionResult> GetDealItemsListById(int id, int CategoryId = 0)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.GetDealItemsListById(id, CategoryId);
 
             return Ok(_response);
         }

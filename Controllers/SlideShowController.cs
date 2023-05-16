@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using PizzaOrder.Dtos;
+using PizzaOrder.Helpers;
 using PizzaOrder.IRepository;
 using System.Threading.Tasks;
 
 namespace PizzaOrder.Controllers
 {
-   
+    [Authorize(Roles = AppRoles.Admin_Only)]
     public class SlideShowController : BaseApiController
     {
         private readonly ISlideShowRepository _repo;
@@ -34,8 +35,8 @@ namespace PizzaOrder.Controllers
             return Ok(_response);
         }
 
-        [HttpPut("EditItem/{id}")]
-        public async Task<IActionResult> EditSlideShow(int id, int imageid, [FromForm]  SlideShowEditDto model
+        [HttpPut("EditItem/{ImageId}")]
+        public async Task<IActionResult> EditSlideShow(int ImageId, [FromForm]  SlideShowEditDto model
             )
         {
             if (!ModelState.IsValid)
@@ -43,11 +44,11 @@ namespace PizzaOrder.Controllers
                 return BadRequest(ModelState);
             }
 
-            _response = await _repo.EditSlideShow(id,imageid, model);
+            _response = await _repo.EditSlideShow(ImageId, model);
 
             return Ok(_response);
         }
-
+        [AllowAnonymous]
         [HttpGet("GetAllSlideShows/{CompanyId}")]
         public async Task<IActionResult> GetAllSlideShows(int CompanyId)
         {
@@ -56,6 +57,18 @@ namespace PizzaOrder.Controllers
                 return BadRequest(ModelState);
             }
             _response = await _repo.GetAllSlideShows(CompanyId);
+
+            return Ok(_response);
+        }
+        [AllowAnonymous]
+        [HttpGet("GetSliderDetailById/{ImageId}")]
+        public async Task<IActionResult> GetSliderDetailById(int ImageId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.GetSliderDetailById(ImageId);
 
             return Ok(_response);
         }
@@ -71,6 +84,7 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
+        [AllowAnonymous]
         [HttpGet("GetAllFeaturedAds/{Lat}/{Long}/{Range}")]
         public async Task<IActionResult> GetAllFeaturedAds(double Lat, double Long, int Range)
         {
@@ -91,6 +105,17 @@ namespace PizzaOrder.Controllers
             }
 
             _response = await _repo.EditFeaturedAds(id, model);
+
+            return Ok(_response);
+        }
+        [HttpDelete("DeleteSliderById/{id}")]
+        public async Task<IActionResult> DeleteSliderById(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.DeleteSliderById(id);
 
             return Ok(_response);
         }

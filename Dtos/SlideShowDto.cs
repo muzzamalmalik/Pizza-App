@@ -13,6 +13,7 @@ namespace PizzaOrder.Dtos
     public class SlideShowAddDto
     {
         public string ImageDescription { get; set; }
+        public string Heading { get; set; }
         public string FileName { get; set; }
         public string FilePath { get; set; }
         public int CompanyId { get; set; }
@@ -22,6 +23,7 @@ namespace PizzaOrder.Dtos
     public class SlideShowEditDto
     {
         public string ImageDescription { get; set; }
+        public string Heading { get; set; }
         public string FileName { get; set; }
         public string FilePath { get; set; }
         public int CompanyId { get; set; }
@@ -31,7 +33,10 @@ namespace PizzaOrder.Dtos
     }
     public class GetAllSlideShowDto
     {
+        public int Id { get; set; }
+        public int ImageId { get; set; }
         public string ImageDescription { get; set; }
+        public string Heading { get; set; }
         public string FileName { get; set; }
         public string FilePath { get; set; }
         public string FullPath { get; set; }

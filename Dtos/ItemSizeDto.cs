@@ -5,6 +5,11 @@ namespace PizzaOrder.Dtos
 {
     public class ItemSizeDto
     {
+        public string SizeDescription { get; set; }
+        public int Price { get; set; }
+        public int ItemId { get; set; }
+        public int CompanyId { get; set; }
+        public bool IsActive { get; set; }
     }
 
     public class AddItemSizeDto
@@ -13,14 +18,18 @@ namespace PizzaOrder.Dtos
         public int Price { get; set; }
         public int ItemId { get; set; }
         public int CompanyId { get; set; }
+        public bool IsActive { get; set; }
     }
 
     public class EditItemSizeDto
     {
+        public int Id { get; set; }
         public string SizeDescription { get; set; }
         public int Price { get; set; }
         public int ItemId { get; set; }
         public int CompanyId { get; set; }
+        public bool IsActive { get; set; }
+
     }
     public class GetAllItemSizeDto
     {
@@ -29,6 +38,7 @@ namespace PizzaOrder.Dtos
         public int Price { get; set; }
         public int ItemId { get; set; }
         public int CompanyId { get; set; }
+        public bool IsActive { get; set; }
         public int CreatedById { get; set; }
         public int? UpdatedById { get; set; }
         public DateTime DateCreated { get; set; }
@@ -44,6 +54,7 @@ namespace PizzaOrder.Dtos
         public int CompanyId { get; set; }
         public int CreatedById { get; set; }
         public int? UpdatedById { get; set; }
+        public bool IsActive { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
     }

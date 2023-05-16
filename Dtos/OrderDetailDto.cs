@@ -43,6 +43,20 @@ namespace PizzaOrder.Dtos
 
 
     }
+    public class GetDealsItemsListDto
+    {
+        public List<GetAllDealsItemDto> objItemList { get; set; }
+        public int Quantity { get; set; }
+
+    }
+    public class GetAllDealsItemDto
+    {
+        public int ItemId { get; set; }
+        public int CategoryId { get; set; }
+        public string ItemName { get; set; }
+
+
+    }
     public class OrderDetailAdditionalDetailsDto
     {
         public int Id { get; set; }
@@ -69,6 +83,7 @@ namespace PizzaOrder.Dtos
         public int OrderType { get; set; }
         //public string Instructions { get; set; }
         public int SubTotal { get; set; }
+        public bool IsDeal { get; set; }
         public List<AdditionalDetailsDto> objAdditionalDetails { get; set; }
         public List<OrderDetailDealDto> objDeals { get; set; }
     }
@@ -99,6 +114,7 @@ namespace PizzaOrder.Dtos
         public int OrderId { get; set; }
         public int? DealId { get; set; }
         public string DealName { get; set; }
+        public string ItemDescription { get; set; }
         public int? DealPrice { get; set; }
         //public int? CategoryId { get; set; }
         //public string CategoryName { get; set; }
@@ -106,10 +122,12 @@ namespace PizzaOrder.Dtos
         public string ItemName { get; set; }
         public int? ItemSizeId { get; set; }
         public string ItemSizeName { get; set; }
+        public string FullPath { get; set; }
         public int? ItemSizePrice { get; set; }
         public int? CrustId { get; set; }
         public string CrustName { get; set; }
         public int? CrustPrice { get; set; }
+        public int? DealDiscountPrice { get; set; }
         public List<OrderDetailAdditionalDetailsDto> ObjAdditionalDetails { get; set; }
         public List<DealDto> objDeals { get; set; }
         public int Quantity { get; set; }

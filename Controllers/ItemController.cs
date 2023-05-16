@@ -3,12 +3,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using PizzaOrder.Dtos;
+using PizzaOrder.Helpers;
 using PizzaOrder.IRepository;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 
 namespace PizzaOrder.Controllers
 {
+    [Authorize(Roles = AppRoles.Admin_Only)]
     public class ItemController : BaseApiController
     {
 
@@ -50,31 +53,31 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
-
-        [HttpGet("GetAllItem/{CompanyId}/{Categoryid}/{page}/{pageSize}")]
-        public async Task<IActionResult> GetAllItem(int CompanyId, int Categoryid, int page, int pageSize)
+        [AllowAnonymous]
+        [HttpGet("GetAllItem/{Categoryid}/{page}/{pageSize}")]
+        public async Task<IActionResult> GetAllItem(int Categoryid, int page, int pageSize)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            _response = await _repo.GetAllItem(CompanyId,Categoryid,page,pageSize);
+            _response = await _repo.GetAllItem(Categoryid,page,pageSize);
 
             return Ok(_response);
         }
-
-        [HttpGet("GetItemDetailsById")]
-        public async Task<IActionResult> GetItemDetailsById(int id, int CompanyId)
+        [AllowAnonymous]
+        [HttpGet("GetItemDetailsById/{id}")]
+        public async Task<IActionResult> GetItemDetailsById(int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            _response = await _repo.GetItemDetailsById(id, CompanyId);
+            _response = await _repo.GetItemDetailsById(id);
 
             return Ok(_response);
         }
-
+        [AllowAnonymous]
         [HttpPost("GetAllItemByWord")]
         public async Task<IActionResult> GetAllItemByWord([FromForm] GetItemsBySearchFields dtoData)
         {
@@ -86,6 +89,7 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
+        [AllowAnonymous]
         [HttpGet("GetAllItems/{CompanyId}")]
         public async Task<IActionResult> GetAllItems(int CompanyId)
         {
@@ -97,18 +101,19 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
-        [HttpGet("GetItemById")]
-        public async Task<IActionResult> GetItemById(int id, int CompanyId)
+        [AllowAnonymous]
+        [HttpGet("GetItemById/{id}")]
+        public async Task<IActionResult> GetItemById(int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            _response = await _repo.GetItemById(id, CompanyId);
+            _response = await _repo.GetItemById(id);
 
             return Ok(_response);
         }
-
+        [AllowAnonymous]
         [HttpPost("GetItemSearchbylocation")]
         public async Task<IActionResult> GetItemSearchbylocation([FromForm] ItemSearchbylocationDto dtoData)
         {
@@ -120,7 +125,29 @@ namespace PizzaOrder.Controllers
 
             return Ok(_response);
         }
+        [AllowAnonymous]
+        [HttpPost("GetItemsByCategoryandPrice")]
+        public async Task<IActionResult> GetItemsByCategoryandPrice(ItemsByCategoryandPriceDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.GetItemsByCategoryandPrice(dto);
 
+            return Ok(_response);
+        }
+        [HttpDelete("DeleteItemById/{id}")]
+        public async Task<IActionResult> DeleteItemById(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _response = await _repo.DeleteItemById(id);
 
+            return Ok(_response);
+        }
+        
     }
 }

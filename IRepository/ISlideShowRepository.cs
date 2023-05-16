@@ -8,10 +8,12 @@ namespace PizzaOrder.IRepository
     {
         Task<ServiceResponse<object>> AddSlideShow(SlideShowAddDto dtoData);
         Task<ServiceResponse<object>> GetAllSlideShows(int CompanyId);
-        Task<ServiceResponse<object>> EditSlideShow(int id, int imageid, SlideShowEditDto dtoData);
+        Task<ServiceResponse<object>> GetSliderDetailById(int ImageId);
+        Task<ServiceResponse<object>> EditSlideShow(int ImageId, SlideShowEditDto dtoData);
         Task<ServiceResponse<object>> AddFeaturedAds(AddFeaturedAdsDto dtoData);
         Task<ServiceResponse<object>> GetAllFeaturedAds(double Lat, double Long, int Range);
         Task<ServiceResponse<object>> EditFeaturedAds(int id, EditFeaturedAdsDto dtoData);
+        Task<ServiceResponse<object>> DeleteSliderById(int id);
 
     }
 }

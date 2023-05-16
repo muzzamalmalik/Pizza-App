@@ -9,10 +9,11 @@ namespace PizzaOrder.IRepository
     {
         Task<ServiceResponse<object>> AddTopping(AddToppingDto dtoData);
         Task<ServiceResponse<object>> EditTopping(int id, EditToppingDto dtoData);
-        Task<ServiceResponse<object>> GetAllTopping(int CompanyId);
+        Task<ServiceResponse<object>> GetAllTopping();
         Task<ServiceResponse<object>> AddNewTopping(AddNewToppingDto dtoData);
         Task<ServiceResponse<object>> EditNewTopping(int id, EditNewToppingDto dtoData);
-        Task<ServiceResponse<object>> GetAllNewTopping(int ComapnyId);
+        Task<ServiceResponse<object>> GetAllNewTopping();
         Task<ServiceResponse<object>> GetAllToppingById(int Id);
+        Task<ServiceResponse<object>> DeleteToppingById(int Id);
     }
 }

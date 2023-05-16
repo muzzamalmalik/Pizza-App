@@ -12,19 +12,26 @@ namespace PizzaOrder.Dtos
        
         public int DealSectionId { get; set; }
         public int ItemId { get; set; }
+        public int ItemSizeId { get; set; }
+        public bool IsActive { get; set; }
     }
 
     public class EditDealSectionDetailDto
     {
         
+        public int Id { get; set; }
         public int DealSectionId { get; set; }
         public int ItemId { get; set; }
+        public int ItemSizeId { get; set; }
+        public int Mode { get; set; }
+        public bool IsActive { get; set; }
+
     }
 
     public class GetAllDealSectionDetailDto
     {
         public int Id { get; set; }
-        
+        public bool IsActive { get; set; }
         public int DealSectionId { get; set; }
         public int ItemId { get; set; }
         public string ItemName { get; set; }
